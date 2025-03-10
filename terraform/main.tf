@@ -35,10 +35,14 @@ resource "aws_instance" "my_instance" {
               EOF
 }
 
+data "aws_vpc" "selected" {
+  id = "vpc-0dcb467ecc7f5abd1"  # Replace with your actual VPC ID
+}
+
 resource "aws_security_group" "allow_ssh" {
   name_prefix = "allow_ssh-"
   description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     from_port   = 22
@@ -52,6 +56,17 @@ resource "aws_security_group" "allow_ssh" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_subnet" "main_subnet" {
+  vpc_id                  = data.aws_vpc.selected.id  # Replace with your actual VPC ID
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "af-south-1"  # Pick an AZ in your region
+  map_public_ip_on_launch = true  # Ensures instances get a public IP
+
+  tags = {
+    Name = "my-subnet"
   }
 }
 
