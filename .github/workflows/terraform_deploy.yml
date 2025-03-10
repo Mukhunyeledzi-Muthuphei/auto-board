@@ -16,8 +16,8 @@ jobs:
       - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws_access_key_id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          aws_secret_access_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Set up Terraform
