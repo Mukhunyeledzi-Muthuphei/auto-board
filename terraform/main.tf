@@ -18,6 +18,7 @@ resource "aws_vpc" "main" {
 resource "aws_instance" "my_instance" {
   ami           = "ami-00d6d5db7a745ff3f"  # Example Amazon Linux 2 AMI, adjust to your preferred one
   instance_type = "t3.micro"
+  subnet_id     = aws_subnet.main_subnet.id
 
   # Update security group to allow inbound SSH (port 22) and any other ports you may need
   security_groups = ["default"]
@@ -62,7 +63,7 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_subnet" "main_subnet" {
   vpc_id                  = data.aws_vpc.selected.id  # Replace with your actual VPC ID
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "af-south-1"  # Pick an AZ in your region
+  availability_zone       = "af-south-1a"
   map_public_ip_on_launch = true  # Ensures instances get a public IP
 
   tags = {
