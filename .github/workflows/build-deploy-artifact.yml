@@ -33,11 +33,16 @@ jobs:
         sudo apt-get install -y python3-pip
         python3 -m pip install --upgrade awscli
 
-    # Upload JAR to S3 using AWS CLI
-    - name: Upload JAR to S3
+    # Create S3 bucket (if it doesn't exist)
+    - name: Create S3 bucket if it doesn't exist
       run: |
-        aws s3 cp ./target/*.jar s3://artifacts --acl public-read
+        BUCKET_NAME="artifacts"
+        aws s3api head-bucket --bucket $BUCKET_NAME || aws s3 mb s3://$BUCKET_NAME
+
+    # Upload JAR to S3
+    - name: Upload JAR to S3
+      run: aws s3 cp ./target/*.jar s3://artifacts/ --acl public-read
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
