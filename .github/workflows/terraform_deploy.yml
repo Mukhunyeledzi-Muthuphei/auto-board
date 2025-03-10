@@ -1,0 +1,36 @@
+name: Deploy application with Terraform
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy_terraform:
+    name: Deploy with terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Initialize terraform
+        run: terraform init -reconfigure
+        working-directory: ./terraform
+
+      - name: Validate terraform configuration
+        run: terraform validate -no-color
+        working-directory: ./terraform
+
+      - name: Run terraform apply
+        run: terraform apply -auto-approve -no-color
+        working-directory: ./terraform
