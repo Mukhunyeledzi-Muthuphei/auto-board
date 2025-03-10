@@ -24,7 +24,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Initialize terraform
-        run: terraform init
+        run: terraform init -reconfigure
 
       - name: Validate terraform configuration
         run: terraform validate -no-color
