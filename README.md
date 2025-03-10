@@ -1,5 +1,8 @@
 ## Docker related commands
 
+Ensure target exists
+mvn clean install
+
 docker build -t autoboard .
 
 docker run --rm -p 5000:8080 autoboard
