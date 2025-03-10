@@ -39,14 +39,14 @@ jobs:
         BUCKET_NAME="artifacts"
         aws s3api head-bucket --bucket $BUCKET_NAME || aws s3 mb s3://$BUCKET_NAME
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
     # Upload JAR to S3
     - name: Upload JAR to S3
       run: aws s3 cp ./target/*.jar s3://artifacts/ --acl public-read
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
