@@ -19,9 +19,7 @@ resource "aws_instance" "my_instance" {
   ami           = "ami-00d6d5db7a745ff3f"  # Example Amazon Linux 2 AMI, adjust to your preferred one
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.main_subnet.id
-
-  # Update security group to allow inbound SSH (port 22) and any other ports you may need
-  security_groups = ["default"]
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
 
   tags = {
     Name = "Autoboard"
