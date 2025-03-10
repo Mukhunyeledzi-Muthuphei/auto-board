@@ -31,3 +31,4 @@ jobs:
 
       - name: Run terraform apply
         run: terraform apply -auto-approve -no-color
+        working-directory: ./terraform
