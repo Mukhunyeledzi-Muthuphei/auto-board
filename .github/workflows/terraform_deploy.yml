@@ -18,7 +18,7 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
           aws_secret_access_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          region: "af-south-1"
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
