@@ -1,5 +1,6 @@
 provider "aws" {
   region = "af-south-1"  # Adjust to your preferred region
+  version = "~> 4.0"
 }
 
 resource "aws_s3_bucket" "app_bucket" {
