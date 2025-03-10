@@ -60,7 +60,7 @@ resource "aws_security_group" "allow_ssh" {
 
 resource "aws_subnet" "main_subnet" {
   vpc_id                  = data.aws_vpc.selected.id  # Replace with your actual VPC ID
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = "10.0.2.0/24"
   availability_zone       = "af-south-1a"
   map_public_ip_on_launch = true  # Ensures instances get a public IP
 
