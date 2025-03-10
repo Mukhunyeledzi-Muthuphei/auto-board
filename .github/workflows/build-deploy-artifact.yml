@@ -29,7 +29,9 @@ jobs:
 
     # Install AWS CLI
     - name: Install AWS CLI
-      run: sudo apt-get update && sudo apt-get install -y awscli
+      run: |
+        sudo apt-get install -y python3-pip
+        python3 -m pip install --upgrade awscli
 
     # Upload JAR to S3 using AWS CLI
     - name: Upload JAR to S3
