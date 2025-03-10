@@ -42,6 +42,10 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
+    # Check JARs in target folder
+    - name: List files in target directory
+      run: ls -la ./target
+
     # Upload JAR to S3
     - name: Upload JAR to S3
       run: |
