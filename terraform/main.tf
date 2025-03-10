@@ -11,8 +11,8 @@ provider "aws" {
   region = "af-south-1"  # Adjust to your preferred region
 }
 
-resource "aws_s3_bucket" "app_bucket" {
-  bucket = "autoboard-artifacts"
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
 }
 
 resource "aws_instance" "my_instance" {
@@ -35,14 +35,10 @@ resource "aws_instance" "my_instance" {
               EOF
 }
 
-data "aws_vpc" "default" {
-  default = true
-}
-
 resource "aws_security_group" "allow_ssh" {
   name_prefix = "allow_ssh-"
   description = "Allow SSH inbound traffic"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     from_port   = 22
