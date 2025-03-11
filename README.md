@@ -1,4 +1,9 @@
-<<<<<<< Updated upstream
+# Auto Board
+
+Auto Board is a project that provides a CLI application for managing tasks and interacting with Google OAuth2 for authentication.
+
+## Getting Started
+
 ## Docker related commands
 
 Ensure target exists
@@ -12,12 +17,6 @@ You can access the API from port 5000 on your machine:
 http://localhost:5000/api/misc/health
 
 It is essentially the same as running the API locally, however we now have a way to package it into a container.
-=======
-# Auto Board
-
-Auto Board is a project that provides a CLI application for managing tasks and interacting with Google OAuth2 for authentication.
-
-## Getting Started
 
 ### Prerequisites
 
@@ -58,4 +57,3 @@ This project is licensed under the Apache License, Version 2.0. See the [LICENSE
 - Spring Boot
 - Spring Shell
 - Google OAuth2
->>>>>>> Stashed changes
