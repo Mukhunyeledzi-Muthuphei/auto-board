@@ -53,26 +53,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Spring Boot with Shell -->
-	<dependency>
-		<groupId>org.springframework.shell</groupId>
-		<artifactId>spring-shell-starter</artifactId>
-		<version>2.1.0</version>
-	</dependency>
-
-    <!-- Spring Security OAuth2 -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-oauth2-client</artifactId>
-    </dependency>
-
-    <!-- JSON Processing -->
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-    </dependency>
-
 	<dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-context</artifactId>
