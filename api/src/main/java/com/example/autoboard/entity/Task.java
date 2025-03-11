@@ -34,8 +34,8 @@ public class Task {
         return title;
     }
 
-    public void setTitle(String name) {
-        this.title = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // toString method for debugging
@@ -43,7 +43,7 @@ public class Task {
     public String toString() {
         return "City{" +
                 "id=" + id +
-                ", name='" + title + '\'' +
+                ", title='" + title + '\'' +
                 '}';
     }
 }
