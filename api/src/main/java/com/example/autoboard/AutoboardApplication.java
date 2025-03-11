@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AutoboardApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GoogleAuthCommands.class, args);
+		SpringApplication.run(AutoboardApplication.class, args);
 	}
 
 }
