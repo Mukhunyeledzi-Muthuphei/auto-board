@@ -45,7 +45,7 @@ jobs:
         if: env.DB_EXISTS == 'false'
         run: |
           aws rds create-db-instance \
-              --db-instance-identifier autoboard_instance \
+              --db-instance-identifier autoboard-instance \
               --db-instance-class db.t3.micro \
               --engine postgres \
               --db-name autoboard \
