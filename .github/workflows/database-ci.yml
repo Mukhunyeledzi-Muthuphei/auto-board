@@ -55,8 +55,7 @@ jobs:
               --backup-retention-period 7 \
               --no-multi-az \
               --publicly-accessible \
-              # --vpc-security-group-ids ${{ secrets.DB_SECURITY_GROUP_ID }} \
-              # --db-subnet-group-name ${{ secrets.DB_SUBNET_GROUP }} 
+              --db-subnet-group-name ${{ secrets.DB_SUBNET_GROUP }} 
 
       - name: ⏳ Wait for RDS to be available
         if: env.DB_EXISTS == 'false'
