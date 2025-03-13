@@ -8,25 +8,33 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID
-    private Long id;
+    private int id;
 
-    @Column(nullable = false, length = 100) // City name cannot be null
+    @Column(nullable = false, length = 100)
     private String title;
 
-    // Default constructor
+    @Column(nullable = false, length = 300)
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private TaskStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false) 
+    private Project project;
+
+    @ManyToOne
+    @JoinColumn(name = "assignee_id", nullable = true)
+    private User assignee;
+
     public Task() {}
 
-    // Constructor with parameters
-    public Task(String title) {
-        this.title = title;
-    }
-
-    // Getters and Setters
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -38,12 +46,33 @@ public class Task {
         this.title = title;
     }
 
-    // toString method for debugging
-    @Override
-    public String toString() {
-        return "City{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                '}';
+    public String getDescription() {
+        return description;
     }
+
+    public void setDescription(String description) {
+         this.description = description; 
+    }
+
+    public TaskStatus getStatus() { 
+        return status; 
+    }
+
+    public void setStatus(TaskStatus status) {
+         this.status = status; 
+    }
+    public Project getProject() { 
+        return project; 
+    }
+    public void setProject(Project project) { 
+        this.project = project; 
+    }
+    public User getAssignee() { 
+        return assignee; 
+    }
+    public void setAssignee(User assignee) { 
+        this.assignee = assignee; 
+    }
+
+
 }
