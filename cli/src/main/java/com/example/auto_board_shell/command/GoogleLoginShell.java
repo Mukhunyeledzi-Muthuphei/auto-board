@@ -43,9 +43,11 @@ public class GoogleLoginShell {
 
         System.out.println("Open this URL to log in: " + loginUrl);
 
-        // Open browser automatically if possible
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            Desktop.getDesktop().browse(URI.create(loginUrl));
+        // Open browser automatically using cmd
+        try {
+            new ProcessBuilder("cmd", "/c", "start", loginUrl).start();
+        } catch (IOException e) {
+            System.err.println("Failed to open browser: " + e.getMessage());
         }
 
         try {
@@ -69,7 +71,6 @@ public class GoogleLoginShell {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
                 String response;
-                System.out.println("Handling request: " + exchange.getRequestURI());
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String query = exchange.getRequestURI().getQuery();
                     System.out.println("Query: " + query);

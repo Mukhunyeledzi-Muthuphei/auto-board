@@ -35,10 +35,10 @@ public class GoogleAuthController {
     @GetMapping("/login-url")
     public String getLoginUrl() {
         return authUrl + "?client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
-                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-                "&response_type=code" +
-                "&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8) +
-                "&access_type=offline";
+                "^&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
+                "^&response_type=code" +
+                "^&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8) +
+                "^&access_type=offline";
     }
 
     @GetMapping("/callback")
