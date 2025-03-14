@@ -1,6 +1,6 @@
 package com.example.auto_board_shell;
 
-import com.example.auto_board_shell.command.WelcomeCommand;
+import com.example.auto_board_shell.command.EntryCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,15 +11,18 @@ import org.springframework.context.event.EventListener;
 public class AutoBoardShellApplication {
 
 	@Autowired
-	private WelcomeCommand welcomeCommand;
+	private EntryCommand entryCommand;
 
 	public static void main(String[] args) {
-		// Starts the Spring Boot application and the Spring Shell environment
 		SpringApplication.run(AutoBoardShellApplication.class, args);
 	}
 
 	@EventListener(ApplicationStartedEvent.class)
 	public void onApplicationStarted() {
-		welcomeCommand.welcome();
+		entryCommand.clearTerminal();
+		entryCommand.displayBanner();
+		entryCommand.displayWelcome();
+		entryCommand.displayHelp();
 	}
+
 }
