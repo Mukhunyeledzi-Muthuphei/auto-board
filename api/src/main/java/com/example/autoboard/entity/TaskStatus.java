@@ -11,7 +11,7 @@ public class TaskStatus {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     public TaskStatus(){
