@@ -24,9 +24,8 @@ public class TaskService {
     }
 
 public Task getTaskById(Long id) {
-Optional<Task> taskOptional = taskRepository.findById(id);
-return taskOptional.orElseThrow(() -> new RuntimeException("Task not found
-with id: " + id));
+    Optional<Task> taskOptional = taskRepository.findById(id);
+    return taskOptional.orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 }
 
     public List<Task> getTasksByStatus(Long statusId) {
