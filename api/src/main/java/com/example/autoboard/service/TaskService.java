@@ -12,22 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskService {
 
-    
     private final TaskRepository taskRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository){
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAlltasks(){
+    public List<Task> getAlltasks() {
         return taskRepository.findAll();
     }
 
-    public Task getTaskById(Long id) {
-        Optional<Task> taskOptional = taskRepository.findById(id);
-        return taskOptional.orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
-    }
+public Task getTaskById(Long id) {
+Optional<Task> taskOptional = taskRepository.findById(id);
+return taskOptional.orElseThrow(() -> new RuntimeException("Task not found
+with id: " + id));
+}
 
     public List<Task> getTasksByStatus(Long statusId) {
         return taskRepository.findByStatusId(statusId);
@@ -37,7 +37,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task updateTask(Long id, Task task){
+    public Task updateTask(Long id, Task task) {
         Task existingTask = getTaskById(id);
         existingTask.setTitle(task.getTitle());
         existingTask.setDescription(task.getDescription());
@@ -53,7 +53,5 @@ public class TaskService {
         }
         taskRepository.deleteById(id);
     }
-
-
 
 }

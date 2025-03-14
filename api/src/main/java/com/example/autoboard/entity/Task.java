@@ -21,14 +21,15 @@ public class Task {
     private TaskStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false) 
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @ManyToOne
     @JoinColumn(name = "assignee_id", nullable = true)
     private User assignee;
 
-    public Task() {}
+    public Task() {
+    }
 
     public Long getId() {
         return id;
@@ -51,28 +52,31 @@ public class Task {
     }
 
     public void setDescription(String description) {
-         this.description = description; 
+        this.description = description;
     }
 
-    public TaskStatus getStatus() { 
-        return status; 
+    public TaskStatus getStatus() {
+        return status;
     }
 
     public void setStatus(TaskStatus status) {
-         this.status = status; 
-    }
-    public Project getProject() { 
-        return project; 
-    }
-    public void setProject(Project project) { 
-        this.project = project; 
-    }
-    public User getAssignee() { 
-        return assignee; 
-    }
-    public void setAssignee(User assignee) { 
-        this.assignee = assignee; 
+        this.status = status;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public User getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(User assignee) {
+        this.assignee = assignee;
+    }
 
 }

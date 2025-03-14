@@ -37,9 +37,10 @@ public class ActivityLogController {
     }
 
     // TODO REMOVE LATER
-//    @PostMapping
-//    public ResponseEntity<ActivityLog> createLog(@RequestBody ActivityLog log) {
-//        ActivityLog newLog = activityLogService.createLog(log.getTaskId(), log.getAction());
-//        return ResponseEntity.ok(newLog);
-//    }
+    // @PostMapping
+    // public ResponseEntity<ActivityLog> createLog(@RequestBody ActivityLog log) {
+    // ActivityLog newLog = activityLogService.createLog(log.getTaskId(),
+    // log.getAction());
+    // return ResponseEntity.ok(newLog);
+    // }
 }

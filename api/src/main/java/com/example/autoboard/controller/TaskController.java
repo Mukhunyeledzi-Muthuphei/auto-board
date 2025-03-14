@@ -12,11 +12,10 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    
     private final TaskService taskService;
 
     @Autowired
-    public TaskController(TaskService taskService){
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
@@ -54,7 +53,5 @@ public class TaskController {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
-
-
 
 }

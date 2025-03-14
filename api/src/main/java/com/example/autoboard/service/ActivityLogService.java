@@ -42,8 +42,7 @@ public class ActivityLogService {
 }
 
 // TODO add logic for creating logs in services
-//private final ActivityLogService activityLogService;
+// private final ActivityLogService activityLogService;
 //
 //// Log activity using Task reference
-//activityLogService.createLog(savedTask, "Created task");
-
+// activityLogService.createLog(savedTask, "Created task");
