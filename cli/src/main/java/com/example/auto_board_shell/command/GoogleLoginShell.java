@@ -73,7 +73,6 @@ public class GoogleLoginShell {
                 String response;
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String query = exchange.getRequestURI().getQuery();
-                    System.out.println("Query: " + query);
                     String code = query != null && query.startsWith("code=") ? query.substring(5) : null;
                     if (code != null) {
                         try {
