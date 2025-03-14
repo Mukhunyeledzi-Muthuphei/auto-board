@@ -1,4 +1,5 @@
 package com.example.autoboard;
+
 import com.example.autoboard.entity.Project;
 import com.example.autoboard.entity.Task;
 import com.example.autoboard.entity.TaskStatus;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TaskServiceTests {
 
-      @Mock
+    @Mock
     private TaskRepository taskRepository;
 
     @InjectMocks
@@ -41,7 +42,7 @@ public class TaskServiceTests {
         task.setId(1L);
         task.setTitle("Test Task");
         task.setDescription("This is a test task");
-       
+
         status = new TaskStatus();
         status.setId(1L);
         status.setName("In Progress");
@@ -51,7 +52,7 @@ public class TaskServiceTests {
         project.setName("Project Alpha");
 
         assignee = new User();
-        assignee.setId(1L);
+        assignee.setId("1");
         assignee.setFirstName("John");
         assignee.setLastName("Doe");
 
