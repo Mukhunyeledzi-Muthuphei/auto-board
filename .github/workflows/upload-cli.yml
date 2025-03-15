@@ -47,6 +47,21 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
+      # 🚀 Disable S3 Block Public Access
+      - name: 🚀 Disable Block Public Access
+        run: |
+          aws s3api put-public-access-block --bucket "$BUCKET_NAME" --public-access-block-configuration '{
+            "BlockPublicAcls": false,
+            "IgnorePublicAcls": false,
+            "BlockPublicPolicy": false,
+            "RestrictPublicBuckets": false
+          }'
+        env:
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
       # 🔓 Set bucket policy to allow public read access
       - name: 🔓 Set public read policy
         run: |
