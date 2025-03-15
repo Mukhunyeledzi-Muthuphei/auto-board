@@ -3,7 +3,10 @@ name: Build and Upload CLI JAR to S3
 on:
   push:
     branches:
-      - 'chris/feature/upload-shell-s3'
+      - 'main'
+    paths:
+      - 'cli/**'
+      - '.github/workflows/upload-cli.yml'
 
 jobs:
   build:
