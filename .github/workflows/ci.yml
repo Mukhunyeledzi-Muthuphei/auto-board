@@ -195,13 +195,13 @@ jobs:
 
       - name: Debug Connection String
         run: |
-          echo "Using connection string: jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}"
+          echo "Using connection string: jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ secrets.DB_NAME }}"
 
       - name: Run Flyway migrations
         run: |
           docker run --rm \
           -v $(pwd)/flyway:/flyway/sql \
           flyway/flyway migrate \
-          -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
+          -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ secrets.DB_NAME }}" \
           -user=${{ secrets.DB_USERNAME }} \
           -password=${{ secrets.DB_PASSWORD }}
