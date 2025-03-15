@@ -13,6 +13,33 @@ provider "aws" {
   region = "af-south-1"
 }
 
+# Create an Internet Gateway
+resource "aws_internet_gateway" "main_igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+# Attach an Internet Gateway to the VPC
+resource "aws_route_table" "main_route_table" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route" "internet_route" {
+  route_table_id         = aws_route_table.main_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.main_igw.id
+}
+
+# Associate the route table with the subnets
+resource "aws_route_table_association" "subnet_a_association" {
+  subnet_id      = aws_subnet.subnet_a.id
+  route_table_id = aws_route_table.main_route_table.id
+}
+
+resource "aws_route_table_association" "subnet_b_association" {
+  subnet_id      = aws_subnet.subnet_b.id
+  route_table_id = aws_route_table.main_route_table.id
+}
+
 resource "aws_elastic_beanstalk_application" "auto_board" {
   name        = "auto-board"
   description = "Auto board application for automating task management"
