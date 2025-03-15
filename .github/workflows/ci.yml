@@ -184,7 +184,7 @@ jobs:
           docker run --rm \
             -e PGPASSWORD=${{ secrets.DB_PASSWORD }} \
             postgres:latest \
-            psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'AutoBoard') THEN CREATE DATABASE AutoBoard; END IF; END \$\$;"
+            psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -c "SELECT 1 FROM pg_database WHERE datname = 'AutoBoard';" | grep -q 1 || psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -c "CREATE DATABASE AutoBoard;"
 
       - name: Debug Connection String
         run: |
