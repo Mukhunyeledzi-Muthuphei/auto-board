@@ -61,7 +61,7 @@ resource "aws_instance" "autoboard" {
 }
 
 resource "aws_security_group" "autoboard-sg" {
-  name = "${random_pet.sg.id}-sg"
+  name = "auto-board-sg"
   ingress {
     from_port   = 8080
     to_port     = 8080
