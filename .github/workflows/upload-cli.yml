@@ -91,7 +91,7 @@ jobs:
       - name: 📤 Upload JAR to Public S3
         run: |
           if [ -f "./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar" ]; then
-            aws s3 cp ./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar s3://$BUCKET_NAME/${GITHUB_SHA:0:7}/ --acl public-read --region $AWS_REGION
+            aws s3 cp ./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar s3://$BUCKET_NAME/${GITHUB_SHA:0:7}/ --region $AWS_REGION
             echo "✅ JAR uploaded successfully!"
             echo "🌍 Public URL: https://$BUCKET_NAME.s3.$AWS_REGION.amazonaws.com/${GITHUB_SHA:0:7}/auto-board-shell-0.0.1-SNAPSHOT.jar"
           else
