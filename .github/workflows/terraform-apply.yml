@@ -1,9 +1,13 @@
 name: "Terraform Apply"
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [ "Database Infrastructure" ]
+    types:
+      - completed
+#  push:
+#    branches:
+#      - main
 
 env:
   TF_CLOUD_ORGANIZATION: "auto-board"

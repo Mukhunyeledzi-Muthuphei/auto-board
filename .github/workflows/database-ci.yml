@@ -1,10 +1,14 @@
-name: Database Infrastructure 🐳 & Migration CI ✈️🧪
+name: "Database Infrastructure"
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - ".github/workflows/database-ci.yml"
+  workflow_run:
+    workflows: [ "Terraform Plan" ]
+    types:
+      - completed
+#  push:
+#    branches: ["main"]
+#    paths:
+#      - ".github/workflows/database-ci.yml"
   workflow_dispatch:
 
 permissions:
