@@ -50,17 +50,22 @@ jobs:
       # 🔓 Set bucket policy to allow public read access
       - name: 🔓 Set public read policy
         run: |
-          aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
+          POLICY_JSON=$(cat <<EOF
+          {
             "Version": "2012-10-17",
             "Statement": [
               {
                 "Effect": "Allow",
                 "Principal": "*",
                 "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::$BUCKET_NAME/*"
+                "Resource": "arn:aws:s3:::${BUCKET_NAME}/*"
               }
             ]
-          }'
+          }
+          EOF
+          )
+          echo "$POLICY_JSON" > policy.json
+          aws s3api put-bucket-policy --bucket "$BUCKET_NAME" --policy file://policy.json
         env:
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
