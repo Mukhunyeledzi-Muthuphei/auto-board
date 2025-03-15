@@ -12,14 +12,6 @@ INSERT INTO project_status (name) VALUES
 ('Completed'),
 ('On Hold');
 
--- Insert data into user_roles table
-INSERT INTO user_roles (role) VALUES
-('Project Manager'),
-('Developer'),
-('Designer'),
-('Tester'),
-('Stakeholder');
-
 -- Insert data into projects table
 INSERT INTO projects (name, description, status_id, owner_id) VALUES
 ('New Website Development', 'Develop a new company website.', 1, 'google_user_123'), -- Planning, Owner: John Doe
@@ -28,15 +20,15 @@ INSERT INTO projects (name, description, status_id, owner_id) VALUES
 ('Internal Tool Development', 'Build an internal tool for team management.', 4, 'google_user_789'); -- On Hold, Owner: Peter Jones
 
 -- Insert data into project_members table
-INSERT INTO project_members (project_id, user_id, role_id) VALUES
-(1, 'google_user_123', 1), -- Project: New Website, User: John Doe, Role: Project Manager
-(1, 'google_user_456', 2), -- Project: New Website, User: Jane Smith, Role: Developer
-(2, 'google_user_456', 1), -- Project: Mobile App, User: Jane Smith, Role: Project Manager
-(2, 'google_user_789', 3), -- Project: Mobile App, User: Peter Jones, Role: Designer
-(3, 'google_user_123', 1), -- Project: Marketing Campaign, User: John Doe, Role: Project Manager
-(3, 'google_user_101', 4), -- Project: Marketing Campaign, User: Alice Brown, Role: Tester
-(4, 'google_user_789', 2), -- Project: Internal Tool, User: Peter Jones, Role: Developer
-(4, 'google_user_123', 5); -- Project: Internal Tool, User: John Doe, Role: Stakeholder
+INSERT INTO project_members (project_id, user_id) VALUES
+(1, 'google_user_123'), -- Project: New Website, User: John Doe
+(1, 'google_user_456'), -- Project: New Website, User: Jane Smith
+(2, 'google_user_456'), -- Project: Mobile App, User: Jane Smith
+(2, 'google_user_789'), -- Project: Mobile App, User: Peter Jones
+(3, 'google_user_123'), -- Project: Marketing Campaign, User: John Doe
+(3, 'google_user_101'), -- Project: Marketing Campaign, User: Alice Brown
+(4, 'google_user_789'), -- Project: Internal Tool, User: Peter Jones
+(4, 'google_user_123'); -- Project: Internal Tool, User: John Doe
 
 -- Insert data into task_status table
 INSERT INTO task_status (name) VALUES
