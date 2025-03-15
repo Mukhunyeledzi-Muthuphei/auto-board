@@ -131,11 +131,11 @@ resource "aws_s3_bucket" "beanstalk_bucket" {
   bucket = "beanstalk-bucket-example"
 }
 
-resource "aws_s3_object" "beanstalk_zip" {
-  bucket = aws_s3_bucket.beanstalk_bucket.id
-  key    = "my-application.zip"
-  source = "../my-application.zip" #local path to zip file
-}
+# resource "aws_s3_object" "beanstalk_zip" {
+#   bucket = aws_s3_bucket.beanstalk_bucket.id
+#   key    = "my-application.zip"
+#   source = "../my-application.zip" #local path to zip file
+# }
 
 resource "aws_elastic_beanstalk_application_version" "example" {
   name        = "v1"
