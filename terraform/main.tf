@@ -129,6 +129,8 @@ resource "aws_security_group" "beanstalk_sg" {
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 }
 
 resource "aws_subnet" "subnet_a" {
