@@ -200,7 +200,7 @@ jobs:
       - name: Run Flyway migrations
         run: |
           docker run --rm \
-          -v $(pwd)/migration:/flyway/sql \
+          -v $(pwd)/flyway:/flyway/sql \
           flyway/flyway migrate \
           -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
           -user=${{ secrets.DB_USERNAME }} \
