@@ -16,6 +16,15 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    public User(String id, String firstName, String lastName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public User() {
+    }
+
     public String getId() {
         return id;
     }
