@@ -46,7 +46,7 @@ resource "aws_db_instance" "auto-board-db" {
   password             = "Password123"        # Replace with a strong password
   parameter_group_name = "default.postgres17" # Adjust if needed
   skip_final_snapshot  = true                 # For testing; remove in production
-  publicly_accessible  = false                #best practice
+  publicly_accessible  = true                #best practice
 
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
