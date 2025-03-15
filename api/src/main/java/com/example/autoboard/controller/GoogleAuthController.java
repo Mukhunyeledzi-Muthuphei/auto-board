@@ -8,55 +8,28 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import com.example.helpers.TokenValidator;
+import com.example.helpers.TokenHelper;
+import com.example.autoboard.entity.User;
+import com.example.autoboard.repository.UserRepository;
+import com.example.autoboard.service.GoogleAuthService;
 
 @RestController
 @RequestMapping("/auth")
 public class GoogleAuthController {
 
-    @Value("${google.client.id}")
-    private String clientId;
+    private final GoogleAuthService googleAuthService;
 
-    @Value("${google.client.secret}")
-    private String clientSecret;
-
-    @Value("${google.redirect.uri}")
-    private String redirectUri;
-
-    @Value("${google.auth.url}")
-    private String authUrl;
-
-    @Value("${google.token.url}")
-    private String tokenUrl;
-
-    @Value("${google.user.info.url}")
-    private String userInfoUrl;
+    public GoogleAuthController(GoogleAuthService googleAuthService) {
+        this.googleAuthService = googleAuthService;
+    }
 
     @GetMapping("/login-url")
     public String getLoginUrl() {
-        return authUrl + "?client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
-                "^&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-                "^&response_type=code" +
-                "^&scope=" + URLEncoder.encode("email profile", StandardCharsets.UTF_8) +
-                "^&access_type=offline";
+        return googleAuthService.getLoginUrl();
     }
 
     @GetMapping("/callback")
     public String handleCallback(@RequestParam("code") String code) {
-        RestTemplate restTemplate = new RestTemplate();
-        Map<String, String> requestBody = Map.of(
-                "client_id", clientId,
-                "client_secret", clientSecret,
-                "redirect_uri", redirectUri,
-                "code", code,
-                "grant_type", "authorization_code");
-
-        Map<String, Object> response = restTemplate.postForObject(tokenUrl, requestBody, Map.class);
-        String idToken = (String) response.get("id_token");
-        if (TokenValidator.isValidIdToken(clientId, idToken)) {
-            return idToken;
-        } else {
-            return "Invalid ID token";
-        }
+        return googleAuthService.handleCallback(code);
     }
 }
