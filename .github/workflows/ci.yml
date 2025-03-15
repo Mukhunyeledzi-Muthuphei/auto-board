@@ -1,7 +1,11 @@
 name: Terraform Plan + Apply + Database
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - 'flyway/**'
 
 env:
   TF_CLOUD_ORGANIZATION: "auto-board"
