@@ -185,10 +185,11 @@ jobs:
             -e PGPASSWORD=${{ secrets.DB_PASSWORD }} \
             postgres:latest \
             bash -c "
+              echo 'Checking if AutoBoard database exists...';
               if psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -tAc \"SELECT 1 FROM pg_database WHERE datname = 'AutoBoard';\" | grep -q 1; then
                 echo 'Database AutoBoard already exists';
               else
-                echo 'Creating database AutoBoard';
+                echo 'Database AutoBoard does not exist. Creating database...';
                 psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -c \"CREATE DATABASE AutoBoard;\";
               fi"
 
