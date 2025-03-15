@@ -13,38 +13,12 @@ provider "aws" {
   region = "af-south-1"
 }
 
-data "aws_elastic_beanstalk_application" "existing_auto_board" {
-  name = "auto-board"
-}
-
-data "aws_iam_role" "existing_beanstalk_role" {
-  name = "beanstalk-role"
-}
-
-data "aws_db_instance" "existing_auto_board_db" {
-  db_instance_identifier = "auto-board-db-instance"
-}
-
-data "aws_security_group" "existing_rds_sg" {
-  name = "rds-sg"
-}
-
-data "aws_s3_bucket" "existing_beanstalk_bucket" {
-  bucket = "beanstalk-bucket-example"
-}
-
-data "aws_security_group" "existing_beanstalk_sg" {
-  name = "beanstalk-sg"
-}
-
 resource "aws_elastic_beanstalk_application" "auto_board" {
-  count       = length(data.aws_elastic_beanstalk_application.existing_auto_board.id) == 0 ? 1 : 0
   name        = "auto-board"
   description = "Auto board application for automating task management"
 }
 
 resource "aws_iam_role" "beanstalk_role" {
-  count = length(data.aws_iam_role.existing_beanstalk_role.id) == 0 ? 1 : 0
   name = "beanstalk-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -62,7 +36,6 @@ resource "aws_iam_role" "beanstalk_role" {
 
 // Database instance creation
 resource "aws_db_instance" "auto-board-db" {
-  count = length(data.aws_db_instance.existing_auto_board_db.id) == 0 ? 1 : 0
   identifier = "auto-board-db-instance"
   allocated_storage    = 20
   storage_type         = "gp2"
@@ -88,7 +61,6 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 }
 
 resource "aws_security_group" "rds_sg" {
-  count = length(data.aws_security_group.existing_rds_sg.id) == 0 ? 1 : 0
   name        = "rds-sg"
   description = "Security group for RDS instance"
   vpc_id      = aws_vpc.main.id
@@ -109,7 +81,6 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_security_group" "beanstalk_sg" {
-  count = length(data.aws_security_group.existing_beanstalk_sg.id) == 0 ? 1 : 0
   name        = "beanstalk-sg"
   description = "Security group for beanstalk"
   vpc_id      = aws_vpc.main.id
@@ -148,17 +119,16 @@ resource "aws_subnet" "subnet_b" {
 // User policies
 
 resource "aws_iam_role_policy_attachment" "beanstalk_web_tier" {
-  role       = aws_iam_role.beanstalk_role[count.index]
+  role       = aws_iam_role.beanstalk_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
 resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
   name = "beanstalk-instance-profile"
-  role = aws_iam_role.beanstalk_role[count.index]
+  role = aws_iam_role.beanstalk_role.name
 }
 
 resource "aws_s3_bucket" "beanstalk_bucket" {
-  count  = length(data.aws_s3_bucket.existing_beanstalk_bucket.id) == 0 ? 1 : 0
   bucket = "beanstalk-bucket-example"
 }
 

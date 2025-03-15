@@ -119,7 +119,7 @@ jobs:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
   deploy:
-    name: Deploy RDS Instance
+    name: Check If RDS Instance Exists
     runs-on: ubuntu-latest
     needs: terraform
 
