@@ -35,7 +35,7 @@ resource "aws_iam_role" "beanstalk_role" {
 }
 
 // Database instance creation
-resource "aws_db_instance" "auto_board_db" {
+resource "aws_db_instance" "auto-board-db" {
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"

@@ -131,7 +131,7 @@ jobs:
       - name: Check if RDS instance exists
         id: check-rds
         run: |
-          if aws rds describe-db-instances --db-instance-identifier auto_board_db > /dev/null 2>&1; then
+          if aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_IDENTIFIER }} > /dev/null 2>&1; then
             echo "DB_EXISTS=true" >> $GITHUB_ENV
           else
             echo "DB_EXISTS=false" >> $GITHUB_ENV
@@ -183,7 +183,7 @@ jobs:
       - name: Get RDS Endpoint
         id: get-endpoint
         run: |
-          ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier auto_board_db --query 'DBInstances[0].Endpoint.Address' --output text)
+          ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_IDENTIFIER }} --query 'DBInstances[0].Endpoint.Address' --output text)
           echo "RDS_ENDPOINT=$ENDPOINT" >> $GITHUB_ENV
 
       - name: Create Initial Database
@@ -203,3 +203,4 @@ jobs:
           -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
           -user=${{ vars.DB_MASTER_USERNAME }} \
           -password=${{ secrets.DB_PASSWORD }}
+
