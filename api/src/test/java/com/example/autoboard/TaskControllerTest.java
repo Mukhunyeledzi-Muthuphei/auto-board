@@ -48,7 +48,7 @@ public class TaskControllerTest {
         project.setName("Project Alpha");
 
         assignee = new User();
-        assignee.setId(1L);
+        assignee.setId("1");
         assignee.setFirstName("John");
         assignee.setLastName("Doe");
 
