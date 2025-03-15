@@ -196,5 +196,5 @@ jobs:
           -v $(pwd)/migration:/flyway/sql \
           flyway/flyway migrate \
           -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
-          -user=${{ vars.DB_MASTER_USERNAME }} \
+          -user=${{ secrets.DB_USERNAME }} \
           -password=${{ secrets.DB_PASSWORD }}
