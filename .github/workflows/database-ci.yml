@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   deploy:
-    name: 🐳 Deploy RDS Instance 
+    name: Deploy RDS Instance
     runs-on: ubuntu-latest
     
     concurrency:
@@ -22,17 +22,17 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - name: 📦 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: 🔑 Configure AWS credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with: 
           aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
-      - name: 🔍 Check if RDS instance exists
+      - name: Check if RDS instance exists
         id: check-rds
         run: |
           if aws rds describe-db-instances --db-instance-identifier autoboard_instance > /dev/null 2>&1; then
@@ -41,7 +41,7 @@ jobs:
             echo "DB_EXISTS=false" >> $GITHUB_ENV
           fi
       
-      - name: 🚀 Create RDS Postgres Server instance
+      - name: Create RDS Postgres Server instance
         if: env.DB_EXISTS == 'false'
         run: |
           aws rds create-db-instance \
@@ -65,7 +65,7 @@ jobs:
           aws rds wait db-instance-available --db-instance-identifier ${{ secrets.DB_INSTANCE_IDENTIFIER }}
 
   migrate:
-    name: ✈️🧪 Run Database Migrations
+    name: Run Database Migrations
     needs: deploy
     runs-on: ubuntu-latest
     
@@ -74,18 +74,37 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - name: 📦 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🔑 Configure AWS credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with: 
           aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
-      - name: 📍 Get RDS Endpoint
+      - name: Get RDS Endpoint
         id: get-endpoint
         run: |
           ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier autoboard_instance --query 'DBInstances[0].Endpoint.Address' --output text)
           echo "RDS_ENDPOINT=$ENDPOINT" >> $GITHUB_ENV
+
+      - name: Create Initial Database
+        run: |
+          docker run --rm \
+            postgres:latest \
+            psql -h ${{ env.RDS_ENDPOINT }} -U ${{ secrets.DB_USERNAME }} -d postgres -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'AutoBoard') THEN CREATE DATABASE AutoBoard; END IF; \$\$;"
+
+      - name: Debug Connection String
+        run: |
+          echo "Using connection string: jdbc:sqlserver://${{ env.RDS_ENDPOINT }}:1433;databaseName=${{ vars.DB_NAME }};encrypt=true;trustServerCertificate=true"
+      - name: Run Flyway migrations
+        run: |
+          docker run --rm \
+          -v $(pwd)/migration:/flyway/sql \
+          flyway/flyway migrate \
+          -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
+          -user=${{ vars.DB_MASTER_USERNAME }} \
+          -password=${{ secrets.DB_PASSWORD }}
+
