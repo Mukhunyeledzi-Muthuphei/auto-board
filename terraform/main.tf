@@ -70,10 +70,10 @@ resource "aws_db_instance" "auto-board-db" {
   engine_version       = "17.1"
   instance_class       = "db.t3.micro"
   username             = "postgres"
-  password             = "Password123"        # Replace with a strong password
-  parameter_group_name = "default.postgres17" # Adjust if needed
-  skip_final_snapshot  = true                 # For testing; remove in production
-  publicly_accessible  = true                #best practice
+  password             = "Password123"
+  parameter_group_name = "default.postgres17"
+  skip_final_snapshot  = true
+  publicly_accessible  = true
 
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
