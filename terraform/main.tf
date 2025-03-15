@@ -148,13 +148,13 @@ resource "aws_subnet" "subnet_b" {
 // User policies
 
 resource "aws_iam_role_policy_attachment" "beanstalk_web_tier" {
-  role       = aws_iam_role.beanstalk_role.name
+  role       = aws_iam_role.beanstalk_role[count.index]
   policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
 resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
   name = "beanstalk-instance-profile"
-  role = aws_iam_role.beanstalk_role.name
+  role = aws_iam_role.beanstalk_role[count.index]
 }
 
 resource "aws_s3_bucket" "beanstalk_bucket" {
