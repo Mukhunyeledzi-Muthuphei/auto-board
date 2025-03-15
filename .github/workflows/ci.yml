@@ -187,7 +187,8 @@ jobs:
 
       - name: Debug Connection String
         run: |
-          echo "Using connection string: jdbc:sqlserver://${{ env.RDS_ENDPOINT }}:1433;databaseName=${{ vars.DB_NAME }};encrypt=true;trustServerCertificate=true"
+          echo "Using connection string: jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}"
+
       - name: Run Flyway migrations
         run: |
           docker run --rm \
