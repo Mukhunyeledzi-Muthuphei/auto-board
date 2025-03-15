@@ -1,9 +1,9 @@
 -- Insert data into users table
-INSERT INTO users (first_name, last_name) VALUES
-('John', 'Doe'),
-('Jane', 'Smith'),
-('Peter', 'Jones'),
-('Alice', 'Brown');
+INSERT INTO users (user_id, first_name, last_name) VALUES
+('google_user_123', 'John', 'Doe'),
+('google_user_456', 'Jane', 'Smith'),
+('google_user_789', 'Peter', 'Jones'),
+('google_user_101', 'Alice', 'Brown');
 
 -- Insert data into project_status table
 INSERT INTO project_status (name) VALUES
@@ -22,21 +22,21 @@ INSERT INTO user_roles (role) VALUES
 
 -- Insert data into projects table
 INSERT INTO projects (name, description, status_id, owner_id) VALUES
-('New Website Development', 'Develop a new company website.', 1, 1), -- Planning, Owner: John Doe
-('Mobile App Redesign', 'Redesign the existing mobile application.', 2, 2), -- In Progress, Owner: Jane Smith
-('Marketing Campaign', 'Launch a new marketing campaign.', 3, 1), -- Completed, Owner: John Doe
-('Internal Tool Development', 'Build an internal tool for team management.', 4, 3); -- On Hold, Owner: Peter Jones
+('New Website Development', 'Develop a new company website.', 1, 'google_user_123'), -- Planning, Owner: John Doe
+('Mobile App Redesign', 'Redesign the existing mobile application.', 2, 'google_user_456'), -- In Progress, Owner: Jane Smith
+('Marketing Campaign', 'Launch a new marketing campaign.', 3, 'google_user_123'), -- Completed, Owner: John Doe
+('Internal Tool Development', 'Build an internal tool for team management.', 4, 'google_user_789'); -- On Hold, Owner: Peter Jones
 
 -- Insert data into project_members table
 INSERT INTO project_members (project_id, user_id, role_id) VALUES
-(1, 1, 1), -- Project: New Website, User: John Doe, Role: Project Manager
-(1, 2, 2), -- Project: New Website, User: Jane Smith, Role: Developer
-(2, 2, 1), -- Project: Mobile App, User: Jane Smith, Role: Project Manager
-(2, 3, 3), -- Project: Mobile App, User: Peter Jones, Role: Designer
-(3, 1, 1), -- Project: Marketing Campaign, User: John Doe, Role: Project Manager
-(3, 4, 4), -- Project: Marketing Campaign, User: Alice Brown, Role: Tester
-(4, 3, 2), -- Project: Internal Tool, User: Peter Jones, Role: Developer
-(4, 1, 5); -- Project: Internal Tool, User: John Doe, Role: Stakeholder
+(1, 'google_user_123', 1), -- Project: New Website, User: John Doe, Role: Project Manager
+(1, 'google_user_456', 2), -- Project: New Website, User: Jane Smith, Role: Developer
+(2, 'google_user_456', 1), -- Project: Mobile App, User: Jane Smith, Role: Project Manager
+(2, 'google_user_789', 3), -- Project: Mobile App, User: Peter Jones, Role: Designer
+(3, 'google_user_123', 1), -- Project: Marketing Campaign, User: John Doe, Role: Project Manager
+(3, 'google_user_101', 4), -- Project: Marketing Campaign, User: Alice Brown, Role: Tester
+(4, 'google_user_789', 2), -- Project: Internal Tool, User: Peter Jones, Role: Developer
+(4, 'google_user_123', 5); -- Project: Internal Tool, User: John Doe, Role: Stakeholder
 
 -- Insert data into task_status table
 INSERT INTO task_status (name) VALUES
@@ -47,19 +47,19 @@ INSERT INTO task_status (name) VALUES
 
 -- Insert data into tasks table
 INSERT INTO tasks (title, description, status_id, project_id, assignee_id) VALUES
-('Design Homepage Mockup', 'Create a mockup for the website homepage.', 1, 1, 2), -- To Do, Project: New Website, Assignee: Jane Smith
-('Develop User Authentication', 'Implement user login and registration.', 2, 1, 1), -- In Progress, Project: New Website, Assignee: John Doe
-('Review Mobile App UI', 'Review the user interface of the mobile app.', 3, 2, 3), -- Review, Project: Mobile App, Assignee: Peter Jones
-('Write Blog Post', 'Write a blog post for the marketing campaign.', 4, 3, 4), -- Done, Project: Marketing, Assignee: Alice Brown
-('Set up Database', 'Set up the database for the internal tool.', 1, 4, 3); -- To Do, Project: Internal Tool, Assignee: Peter Jones
+('Design Homepage Mockup', 'Create a mockup for the website homepage.', 1, 1, 'google_user_456'), -- To Do, Project: New Website, Assignee: Jane Smith
+('Develop User Authentication', 'Implement user login and registration.', 2, 1, 'google_user_123'), -- In Progress, Project: New Website, Assignee: John Doe
+('Review Mobile App UI', 'Review the user interface of the mobile app.', 3, 2, 'google_user_789'), -- Review, Project: Mobile App, Assignee: Peter Jones
+('Write Blog Post', 'Write a blog post for the marketing campaign.', 4, 3, 'google_user_101'), -- Done, Project: Marketing, Assignee: Alice Brown
+('Set up Database', 'Set up the database for the internal tool.', 1, 4, 'google_user_789'); -- To Do, Project: Internal Tool, Assignee: Peter Jones
 
 -- Insert data into comments table
 INSERT INTO comments (content, user_id, task_id) VALUES
-('Looks good so far!', 2, 1),
-('Need to refine the color scheme.', 3, 1),
-('Authentication is working as expected.', 1, 2),
-('Let me know when the UI is ready for final review.', 1, 3),
-('Great job on the blog post!', 1, 4);
+('Looks good so far!', 'google_user_456', 1),
+('Need to refine the color scheme.', 'google_user_789', 1),
+('Authentication is working as expected.', 'google_user_123', 2),
+('Let me know when the UI is ready for final review.', 'google_user_123', 3),
+('Great job on the blog post!', 'google_user_123', 4);
 
 -- Insert data into activity_logs table
 INSERT INTO activity_logs (task_id, action) VALUES

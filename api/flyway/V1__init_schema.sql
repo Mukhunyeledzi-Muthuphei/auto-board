@@ -1,67 +1,87 @@
+-- Drop tables if they exist (for development/testing purposes)
+DROP TABLE IF EXISTS activity_logs;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS task_status;
+DROP TABLE IF EXISTS project_members;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS project_status;
+DROP TABLE IF EXISTS user_roles;
+DROP TABLE IF EXISTS users;
+
+-- Create users table
 CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+    user_id VARCHAR PRIMARY KEY, -- Using Google Sign-In ID as primary key
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL
 );
 
+-- Create project_status table
 CREATE TABLE project_status (
     project_status_id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL UNIQUE
 );
 
-CREATE TABLE projects (
-    project_id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    description TEXT,
-    status_id INTEGER NOT NULL,
-    owner_id INTEGER NOT NULL,
-    FOREIGN KEY (status_id) REFERENCES project_status(project_status_id) ON DELETE RESTRICT,
-    FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
+-- Create user_roles table
 CREATE TABLE user_roles (
     role_id SERIAL PRIMARY KEY,
     role VARCHAR NOT NULL
 );
 
+-- Create projects table
+CREATE TABLE projects (
+    project_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    description TEXT,
+    status_id INTEGER NOT NULL,
+    owner_id VARCHAR NOT NULL, -- Changed to VARCHAR to reference users(user_id)
+    FOREIGN KEY (status_id) REFERENCES project_status(project_status_id) ON DELETE RESTRICT,
+    FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Create project_members table
 CREATE TABLE project_members (
     project_member_id SERIAL PRIMARY KEY,
     project_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    role_id INTEGER NOT NULL, -- Assuming you want to link to user_roles
+    user_id VARCHAR NOT NULL, -- Changed to VARCHAR to reference users(user_id)
+    role_id INTEGER NOT NULL,
     FOREIGN KEY (role_id) REFERENCES user_roles(role_id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+-- Create task_status table
 CREATE TABLE task_status (
     task_status_id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL UNIQUE
 );
 
+-- Create tasks table
 CREATE TABLE tasks (
     task_id SERIAL PRIMARY KEY,
     title VARCHAR NOT NULL,
     description TEXT,
     status_id INTEGER NOT NULL,
     project_id INTEGER NOT NULL,
-    assignee_id INTEGER,
+    assignee_id VARCHAR NULL, -- Changed to VARCHAR to reference users(user_id)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (status_id) REFERENCES task_status(task_status_id) ON DELETE RESTRICT,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
     FOREIGN KEY (assignee_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
+-- Create comments table
 CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id VARCHAR NOT NULL, -- Changed to VARCHAR to reference users(user_id)
     task_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE
 );
 
+-- Create activity_logs table
 CREATE TABLE activity_logs (
     activity_log_id SERIAL PRIMARY KEY,
     task_id INTEGER NOT NULL,
