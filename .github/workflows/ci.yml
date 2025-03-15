@@ -131,30 +131,30 @@ jobs:
       - name: Check if RDS instance exists
         id: check-rds
         run: |
-          if aws rds describe-db-instances --db-instance-identifier autoboard_instance > /dev/null 2>&1; then
+          if aws rds describe-db-instances --db-instance-identifier auto_board_db > /dev/null 2>&1; then
             echo "DB_EXISTS=true" >> $GITHUB_ENV
           else
             echo "DB_EXISTS=false" >> $GITHUB_ENV
           fi
 
-      - name: Create RDS Postgres Server instance
-        if: env.DB_EXISTS == 'false'
-        run: |
-          aws rds create-db-instance \
-              --db-instance-identifier autoboard-instance \
-              --db-instance-class db.t3.micro \
-              --engine postgres \
-              --db-name autoboard \
-              --allocated-storage 20 \
-              --master-username ${{ secrets.DB_USERNAME }} \
-              --master-user-password ${{ secrets.DB_PASSWORD }} \
-              --backup-retention-period 7 \
-              --no-multi-az \
-              --publicly-accessible \
-              --vpc-security-group-ids ${{ secrets.DB_SECURITY_GROUP_ID }} \
-              --db-subnet-group-name ${{ secrets.DB_SUBNET_GROUP }} 
+#      - name: Create RDS Postgres Server instance
+#        if: env.DB_EXISTS == 'false'
+#        run: |
+#          aws rds create-db-instance \
+#              --db-instance-identifier autoboard-instance \
+#              --db-instance-class db.t3.micro \
+#              --engine postgres \
+#              --db-name autoboard \
+#              --allocated-storage 20 \
+#              --master-username ${{ secrets.DB_USERNAME }} \
+#              --master-user-password ${{ secrets.DB_PASSWORD }} \
+#              --backup-retention-period 7 \
+#              --no-multi-az \
+#              --publicly-accessible \
+#              --vpc-security-group-ids ${{ secrets.DB_SECURITY_GROUP_ID }} \
+#              --db-subnet-group-name ${{ secrets.DB_SUBNET_GROUP }}
 
-      - name: ⏳ Wait for RDS to be available
+      - name: Wait for RDS to be available
         if: env.DB_EXISTS == 'false'
         run: |
           echo "Waiting for RDS instance to be available..."
@@ -183,7 +183,7 @@ jobs:
       - name: Get RDS Endpoint
         id: get-endpoint
         run: |
-          ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier autoboard_instance --query 'DBInstances[0].Endpoint.Address' --output text)
+          ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier auto_board_db --query 'DBInstances[0].Endpoint.Address' --output text)
           echo "RDS_ENDPOINT=$ENDPOINT" >> $GITHUB_ENV
 
       - name: Create Initial Database
@@ -203,4 +203,3 @@ jobs:
           -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ vars.DB_NAME }}" \
           -user=${{ vars.DB_MASTER_USERNAME }} \
           -password=${{ secrets.DB_PASSWORD }}
-
