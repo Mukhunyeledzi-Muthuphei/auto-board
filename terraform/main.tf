@@ -15,10 +15,10 @@ terraform {
   required_version = ">= 1.1.0"
 
   cloud {
-    organization = "REPLACE_ME"
+    organization = "auto-board"
 
     workspaces {
-      name = "gh-actions-demo"
+      name = "auto-board-github-actions"
     }
   }
 }
