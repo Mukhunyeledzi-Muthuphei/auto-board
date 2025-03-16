@@ -27,6 +27,8 @@ public class StatusCommand {
     @ShellMethod(key = "project-status-view", value = "View all available project statuses")
     public void projectStatusView() {
         try {
+            formatterService.printInfo("Fetching available project statuses...");
+
             List<Map<String, Object>> statuses = apiService.get("/project-status", List.class);
 
             if (statuses == null || statuses.isEmpty()) {

@@ -1,6 +1,6 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.service.ShellService;
+import com.example.auto_board_shell.service.FormatterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 public class EntryCommand {
 
     @Autowired
-    private ShellService shellService;
+    private FormatterService formatterService;
 
     public void clearTerminal() {
         try {
@@ -22,12 +22,12 @@ public class EntryCommand {
                 System.out.flush();
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error clearing console!");
+            formatterService.printError("Error clearing console!");
         }
     }
 
     public void displayBanner() {
-        String banner = """
+        String bannerText = """
                      \n
                      █████╗ ██╗   ██╗████████╗ ██████╗ ██████╗  ██████╗  █████╗ ██████╗ ██████╗
                     ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗
@@ -37,15 +37,15 @@ public class EntryCommand {
                     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝
                     \n
               """;
-        shellService.printInfo(banner);
+        formatterService.printTheme(bannerText);
     }
 
     public void displayWelcome() {
-        shellService.printHeading("\nWelcome to Autoboard!");
+        formatterService.printThemeBold("\nWelcome to Autoboard!");
     }
 
     public void displayHelp() {
-        shellService.printInfo("Type 'help' to view available commands.");
+        formatterService.printInfo("Type 'help' to view available commands.");
     }
 
 }

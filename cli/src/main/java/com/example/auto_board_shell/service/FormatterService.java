@@ -1,6 +1,7 @@
 package com.example.auto_board_shell.service;
 
 import org.springframework.stereotype.Service;
+import org.fusesource.jansi.Ansi;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,10 +10,28 @@ import java.util.stream.IntStream;
 @Service
 public class FormatterService {
 
+    // Overall project theme - orange
+    public void printTheme(String text) {
+        System.out.println(Ansi.ansi().fgRgb(255, 165, 0).a(text).reset());
+    }
+
+    public void printThemeBold(String text) {
+        System.out.println(Ansi.ansi().fgRgb(255, 165, 0).bold().a(text).reset());
+    }
+
+    // Info - dark orange
+    public void printInfo(String text) {
+        System.out.println(Ansi.ansi().fgRgb(204, 114, 0).a(text).reset());
+    }
+
+    public void printError(String text) {
+        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(text).reset());
+    }
+
     public void printTable(List<String> headers, List<List<String>> data) {
         // Determine column widths
         List<Integer> colWidths = headers.stream()
-                .map(header -> header.length())
+                .map(String::length)
                 .collect(Collectors.toList());
 
         for (List<String> row : data) {
