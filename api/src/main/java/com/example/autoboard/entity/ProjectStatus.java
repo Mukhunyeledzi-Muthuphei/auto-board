@@ -8,7 +8,7 @@ public class ProjectStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long project_status_id;
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
@@ -21,11 +21,11 @@ public class ProjectStatus {
     }
 
     public Long getId() {
-        return id;
+        return project_status_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long project_status_id) {
+        this.project_status_id = project_status_id;
     }
 
     public String getName() {
