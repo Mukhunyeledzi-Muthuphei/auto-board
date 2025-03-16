@@ -1,6 +1,7 @@
 package com.example.autoboard.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "projects")
@@ -17,12 +18,22 @@ public class Project {
     private String description;
 
     // TODO: Might need to come back to this when the status table exists
-    @Column(name = "status_id")
+    @Column(name = "status_id", nullable = false)
     private Long statusId;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private User owner;
+
+    public Project() {
+    }
+
+    public Project(String name, String description, Long statusId, User owner) {
+        this.name = name;
+        this.description = description;
+        this.statusId = statusId;
+        this.owner = owner;
+    }
 
     public Long getId() {
         return id;
@@ -62,5 +73,24 @@ public class Project {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Project project = (Project) o;
+
+        if (id != null ? !id.equals(project.id) : project.id != null)
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
