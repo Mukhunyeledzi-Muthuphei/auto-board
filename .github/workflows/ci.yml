@@ -7,6 +7,7 @@ on:
     paths:
       - 'flyway/**'
       - 'terraform/**'
+  workflow_dispatch:
 
 env:
   TF_CLOUD_ORGANIZATION: "auto-board"
