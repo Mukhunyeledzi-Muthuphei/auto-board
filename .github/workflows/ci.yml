@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'flyway/**'
+      - 'terraform/**'
 
 env:
   TF_CLOUD_ORGANIZATION: "auto-board"
