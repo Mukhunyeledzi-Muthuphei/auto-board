@@ -8,6 +8,7 @@ public class TaskStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "task_status_id")
     private Long task_status_id;
 
     @Column(name = "name", nullable = false)
