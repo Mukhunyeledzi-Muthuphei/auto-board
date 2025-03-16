@@ -1,6 +1,5 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.config.UserSession;
 import com.example.auto_board_shell.service.APIService;
 import com.example.auto_board_shell.service.ShellService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class TaskCommand {
 
     @Autowired
     private APIService apiService;
-
-    @Autowired
-    private UserSession userSession;
 
     @Autowired
     private ShellService shellService;
@@ -172,9 +168,4 @@ public class TaskCommand {
         }
     }
 
-//    public Availability isUserLoggedIn() {
-//        return userSession.isAuthenticated()
-//                ? Availability.available()
-//                : Availability.unavailable("you are not logged in. Please use 'login' command first");
-//    }
 }

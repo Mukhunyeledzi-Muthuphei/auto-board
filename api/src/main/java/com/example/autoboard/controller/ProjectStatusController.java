@@ -37,30 +37,4 @@ public class ProjectStatusController {
         return projectStatus != null ? ResponseEntity.ok(projectStatus) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public ProjectStatus createProjectStatus(@RequestBody ProjectStatus projectStatus) {
-        return projectStatusService.saveProjectStatus(projectStatus);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectStatus> updateProjectStatus(@PathVariable Long id,
-            @RequestBody ProjectStatus projectStatus) {
-        Optional<ProjectStatus> existingProjectStatus = projectStatusService.getProjectStatusById(id);
-        if (existingProjectStatus.isPresent()) {
-            projectStatus.setId(id);
-            return ResponseEntity.ok(projectStatusService.saveProjectStatus(projectStatus));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProjectStatus(@PathVariable Long id) {
-        if (projectStatusService.getProjectStatusById(id).isPresent()) {
-            projectStatusService.deleteProjectStatus(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }

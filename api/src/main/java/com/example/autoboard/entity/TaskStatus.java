@@ -8,13 +8,11 @@ public class TaskStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long task_status_id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    // Getters and Setters
     public Long getId() { return task_status_id; }
     public void setId(Long task_status_id) { this.task_status_id = task_status_id; }
     public String getName() { return name; }
