@@ -9,10 +9,10 @@ public class ActivityLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long activity_log_id;
 
     @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false) // Defines FK relationship
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     @Column(nullable = false, length = 100)
@@ -21,13 +21,12 @@ public class ActivityLog {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    // Getters and Setters
     public Long getId() {
-        return id;
+        return activity_log_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long activity_log_id) {
+        this.activity_log_id = activity_log_id;
     }
 
     public Task getTask() {

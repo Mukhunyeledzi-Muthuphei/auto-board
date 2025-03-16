@@ -9,7 +9,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long comment_id;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -27,11 +27,11 @@ public class Comment {
     }
 
     public Long getId() {
-        return id;
+        return comment_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long comment_id) {
+        this.comment_id = comment_id;
     }
 
     public String getContent() {

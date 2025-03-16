@@ -8,7 +8,7 @@ import java.util.Objects;
 public class User {
 
     @Id
-    private String id;
+    private String user_id;
 
     @Column(nullable = false)
     private String firstName;
@@ -16,8 +16,8 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    public User(String id, String firstName, String lastName) {
-        this.id = id;
+    public User(String user_id, String firstName, String lastName) {
+        this.user_id = user_id;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -26,11 +26,11 @@ public class User {
     }
 
     public String getId() {
-        return id;
+        return user_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getFirstName() {
@@ -56,11 +56,11 @@ public class User {
         if (o == null || getClass() != o.getClass())
             return false;
         User user = (User) o;
-        return id.equals(user.id);
+        return user_id.equals(user.user_id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(user_id);
     }
 }

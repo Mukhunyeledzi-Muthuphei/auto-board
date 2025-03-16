@@ -9,7 +9,7 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long project_id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -22,7 +22,7 @@ public class Project {
     private Long statusId;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "owner_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
 
     public Project() {
@@ -36,11 +36,11 @@ public class Project {
     }
 
     public Long getId() {
-        return id;
+        return project_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long project_id) {
+        this.project_id = project_id;
     }
 
     public String getName() {
@@ -84,13 +84,13 @@ public class Project {
 
         Project project = (Project) o;
 
-        if (id != null ? !id.equals(project.id) : project.id != null)
+        if (project_id != null ? !project_id.equals(project.project_id) : project.project_id != null)
             return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(project_id);
     }
 }

@@ -8,7 +8,7 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID
-    private Long id;
+    private Long task_id;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -32,11 +32,11 @@ public class Task {
     }
 
     public Long getId() {
-        return id;
+        return task_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long task_id) {
+        this.task_id = task_id;
     }
 
     public String getTitle() {
