@@ -85,6 +85,11 @@ public class ProjectCommand {
 
             List<Map<String, Object>> projects = response.getData();
 
+            if (projects == null || projects.isEmpty()) {
+                formatterService.printWarning("No associated projects");
+                return;
+            }
+
             List<String> selectedHeaders = List.of("id", "name", "description", "owner_id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
@@ -119,16 +124,16 @@ public class ProjectCommand {
 
             APIResponse<Map<String, Object>> response = requestService.get("/projects/" + projectId, new ParameterizedTypeReference<Map<String, Object>>() {});
 
+            if (response.getStatusCode() == 403) {
+                formatterService.printWarning("No associated project found");
+                return;
+            }
+
             Map<String, Object> project = response.getData();
 
             List<String> selectedHeaders = List.of("id", "name", "description", "owner_id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
-
-            if (project == null || project.isEmpty()) {
-                formatterService.printWarning("No project found for ID: " + projectId);
-                return;
-            }
 
             List<List<String>> data = List.of(selectedHeaders.stream()
                     .map(key -> {
