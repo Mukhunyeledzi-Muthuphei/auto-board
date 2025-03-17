@@ -19,19 +19,15 @@ public class ProjectStatus {
     public ProjectStatus(String name) {
         this.name = name;
     }
-
     public Long getId() {
         return project_status_id;
     }
-
     public void setId(Long project_status_id) {
         this.project_status_id = project_status_id;
     }
-
     public String getName() {
         return name;
     }
-
     public void setStatus(String name) {
         this.name = name;
     }

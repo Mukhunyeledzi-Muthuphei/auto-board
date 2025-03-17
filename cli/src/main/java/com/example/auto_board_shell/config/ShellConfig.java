@@ -1,32 +1,22 @@
 package com.example.auto_board_shell.config;
 
 import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.shell.jline.PromptProvider;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @Configuration
 public class ShellConfig {
-
-    @Autowired
-    private UserSession userSession;
 
     @Bean
     public PromptProvider promptProvider() {
         return () -> {
-            String prompt = "autoboard-cli";
-
-            // Show username in prompt when logged in
-            if (userSession.isAuthenticated()) {
-                prompt += ":" + userSession.getUserName().split(" ")[0].toLowerCase();
-            }
-
-            return new AttributedString(
-                    prompt + "> ",
-                    AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN)
-            );
+            String projectName = "autoboard-cli";
+            String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+            return AttributedString.fromAnsi(projectName + " | " + currentTime + " > ");
         };
     }
 }

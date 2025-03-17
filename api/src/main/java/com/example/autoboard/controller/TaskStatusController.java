@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/task-status")
@@ -16,33 +17,20 @@ public class TaskStatusController {
     private TaskStatusService taskStatusService;
 
     @GetMapping
-    public List<TaskStatus> getAllProjects() {
+    public List<TaskStatus> getAllTaskStatuses() {
         return taskStatusService.getAllTaskStatuses();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskStatus> getProjectById(@PathVariable Long id) {
-        TaskStatus taskStatus = taskStatusService.getTaskStatusById(id);
-        if (taskStatus != null) {
-            return ResponseEntity.ok(taskStatus);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TaskStatus> getTaskStatusById(@PathVariable Long id) {
+        Optional<TaskStatus> taskStatus = taskStatusService.getTaskStatusById(id);
+        return taskStatus.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // TODO - Remove / keep - but this is only for testing purposes for now
-    @PostMapping
-    public TaskStatus createTaskStatus(@RequestBody TaskStatus taskStatus) {
-        return taskStatusService.createTaskStatus(taskStatus);
+    @GetMapping("/name/{name}")
+    public ResponseEntity<TaskStatus> getTaskStatusByName(@PathVariable String name) {
+        TaskStatus taskStatus = taskStatusService.getTaskStatusByName(name);
+        return taskStatus != null ? ResponseEntity.ok(taskStatus) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id) {
-        boolean isDeleted = taskStatusService.deleteTaskStatus(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
