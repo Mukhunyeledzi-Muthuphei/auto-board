@@ -1,0 +1,58 @@
+name: Deploy to Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - ndzalama/feat/deployment
+    paths:
+        - 'src/**'
+        - 'pom.xml'
+        - '.github/workflows/api-database.yml'
+        - 'flyway/**'
+        - 'terraform/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build Application
+        run: mvn clean package
+
+      - name: Create deployment ZIP
+        run: zip -r deploy.zip target/*.jar
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY}}
+          aws-region: af-south-1
+
+      - name: Upload ZIP to S3 Bucket
+        run: |
+          aws s3 cp deploy.zip s3://auto-board-bucket/deploy.zip
+
+      - name: Create Elastic Beanstalk Application Version
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name auto-board \
+            --version-label "deploy-${{ github.run_number }}-$(date +%s)" \
+            --source-bundle S3Bucket=auto-board-bucket,S3Key=deploy.zip \
+            --region af-south-1
+
+      - name: Update Elastic Beanstalk Environment
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name auto-board-env \
+            --version-label "deploy-${{ github.run_number }}-$(date +%s)" \
+            --region af-south-1
