@@ -63,4 +63,8 @@ public class ActivityLogService {
         log.setTimestamp(LocalDateTime.now());
         activityLogRepository.save(log);
     }
+
+    public List<ActivityLog> getActivityLogsByProjectId(Long projectId) {
+        return activityLogRepository.findByProjectId(projectId);
+    }
 }

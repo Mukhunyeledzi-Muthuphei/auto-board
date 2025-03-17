@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class EntryCommand {
+public class GeneralCommand {
 
     @Autowired
     private FormatterService formatterService;
@@ -41,11 +41,18 @@ public class EntryCommand {
     }
 
     public void displayWelcome() {
-        formatterService.printThemeBold("\nWelcome to Autoboard!");
+        formatterService.printTheme("\nWelcome!");
+    }
+
+    public void displayLogin() {
+        formatterService.printInfo("Type 'login' to sign in with your Google account.");
     }
 
     public void displayHelp() {
         formatterService.printInfo("Type 'help' to view available commands.");
     }
 
+    public void displayGoodbye() {
+        formatterService.printInfo("\nGoodbye! Thanks for using Autoboard.");
+    }
 }

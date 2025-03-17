@@ -56,4 +56,17 @@ public class ActivityLogController {
         String userId = TokenHelper.extractUserIdFromToken(token);
         return activityLogService.getLogsByTaskId(taskId, userId);
     }
+
+    @GetMapping("/project/{projectId}")
+    public List<ActivityLog> getActivityLogsByProjectId(@PathVariable Long projectId) {
+        return activityLogService.getActivityLogsByProjectId(projectId);
+    }
+
+    // TODO REMOVE LATER
+    // @PostMapping
+    // public ResponseEntity<ActivityLog> createLog(@RequestBody ActivityLog log) {
+    // ActivityLog newLog = activityLogService.createLog(log.getTaskId(),
+    // log.getAction());
+    // return ResponseEntity.ok(newLog);
+    // }
 }

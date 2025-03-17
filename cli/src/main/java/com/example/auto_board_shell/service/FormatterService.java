@@ -3,6 +3,7 @@ package com.example.auto_board_shell.service;
 import org.springframework.stereotype.Service;
 import org.fusesource.jansi.Ansi;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,6 +27,10 @@ public class FormatterService {
 
     public void printError(String text) {
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(text).reset());
+    }
+
+    public void printWarning(String text) {
+        System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a(text).reset());
     }
 
     public void printTable(List<String> headers, List<List<String>> data) {
