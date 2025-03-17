@@ -17,9 +17,9 @@ public class Project {
     @Column(name = "description")
     private String description;
 
-    // TODO: Might need to come back to this when the status table exists
-    @Column(name = "status_id", nullable = false)
-    private Long statusId;
+    @ManyToOne
+    @JoinColumn(name = "status_id", referencedColumnName = "project_status_id", nullable = false)
+    private ProjectStatus status;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id", nullable = false)
@@ -28,10 +28,10 @@ public class Project {
     public Project() {
     }
 
-    public Project(String name, String description, Long statusId, User owner) {
+    public Project(String name, String description, ProjectStatus status, User owner) {
         this.name = name;
         this.description = description;
-        this.statusId = statusId;
+        this.status = status;
         this.owner = owner;
     }
 
@@ -60,11 +60,19 @@ public class Project {
     }
 
     public Long getStatusId() {
-        return statusId;
+        return this.status.getId();
     }
 
     public void setStatusId(Long statusId) {
-        this.statusId = statusId;
+        this.status.setId(statusId);
+    }
+
+    public void setStatus(ProjectStatus status) {
+        this.status = status;
+    }
+
+    public ProjectStatus getStatus() {
+        return status;
     }
 
     public User getOwner() {

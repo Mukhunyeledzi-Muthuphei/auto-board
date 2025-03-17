@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import com.example.auto_board_shell.helpers.CurrentUser;
 
 @Service
 public class APIService {
@@ -34,6 +35,7 @@ public class APIService {
     public <T> T post(String uri, Object body, Class<T> responseType) {
         return webClient.post()
                 .uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, CurrentUser.getToken())
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(responseType)
@@ -44,6 +46,7 @@ public class APIService {
     public <T> T put(String uri, Object body, Class<T> responseType) {
         return webClient.put()
                 .uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, CurrentUser.getToken())
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(responseType)
@@ -54,6 +57,7 @@ public class APIService {
     public <T> T delete(String uri, Class<T> responseType) {
         return webClient.delete()
                 .uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, CurrentUser.getToken())
                 .retrieve()
                 .bodyToMono(responseType)
                 .block();

@@ -3,11 +3,14 @@ package com.example.auto_board_shell.service;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
 public class ShellService {
+
+    private final Scanner scanner = new Scanner(System.in);
 
     public void printSuccess(String message) {
         System.out.println("\u001B[32m" + message + "\u001B[0m");
@@ -27,6 +30,11 @@ public class ShellService {
 
     public void printHeading(String heading) {
         System.out.println("\u001B[1;34m" + heading + "\u001B[0m");
+    }
+
+    public String prompt(String message) {
+        System.out.print(message);
+        return scanner.nextLine();
     }
 
     // For tables and structured output
@@ -101,7 +109,7 @@ public class ShellService {
 
     private void printRow(List<String> row, List<Integer> colWidths) {
         String rowLine = IntStream.range(0, row.size())
-                .mapToObj(i -> String.format("| %-"+ colWidths.get(i) +"s ", row.get(i)))
+                .mapToObj(i -> String.format("| %-" + colWidths.get(i) + "s ", row.get(i)))
                 .collect(Collectors.joining()) + "|";
         System.out.println(rowLine);
     }
