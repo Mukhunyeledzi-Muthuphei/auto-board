@@ -40,7 +40,14 @@ public class ProjectMemberService {
         return projectMemberRepository.save(projectMember);
     }
 
-    public void deleteProjectMember(Long id) {
-        projectMemberRepository.deleteById(id);
+    public void deleteProjectMember(Long id, String userId) {
+        Optional<ProjectMember> projectMemberOptional = projectMemberRepository.findById(id);
+        if (projectMemberOptional.isPresent()) {
+            ProjectMember projectMember = projectMemberOptional.get();
+            Project project = projectMember.getProject();
+            if (projectMember.getUser().getId().equals(userId) || project.getOwner().getId().equals(userId)) {
+                projectMemberRepository.deleteById(id);
+            }
+        }
     }
 }

@@ -29,4 +29,9 @@ public class TokenHelper {
                 "given_name", jsonObject.get("given_name").getAsString(),
                 "family_name", jsonObject.get("family_name").getAsString());
     }
+
+    public static String extractUserIdFromToken(String idToken) {
+        Map<String, Object> tokenPayload = parseIdToken(idToken);
+        return (String) tokenPayload.get("sub");
+    }
 }

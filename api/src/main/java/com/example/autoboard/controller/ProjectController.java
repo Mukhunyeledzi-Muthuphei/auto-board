@@ -36,8 +36,10 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails) {
-        Project updatedProject = projectService.updateProject(id, projectDetails);
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails,
+            @RequestHeader("Authorization") String token) throws VerificationException {
+        String userId = extractUserIdFromToken(token);
+        Project updatedProject = projectService.updateProject(id, projectDetails, userId);
         if (updatedProject != null) {
             return ResponseEntity.ok(updatedProject);
         } else {
@@ -46,8 +48,10 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        boolean isDeleted = projectService.deleteProject(id);
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id, @RequestHeader("Authorization") String token)
+            throws VerificationException {
+        String userId = extractUserIdFromToken(token);
+        boolean isDeleted = projectService.deleteProject(id, userId);
         if (isDeleted) {
             return ResponseEntity.noContent().build();
         } else {
