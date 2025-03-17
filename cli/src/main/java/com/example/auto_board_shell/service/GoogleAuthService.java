@@ -1,4 +1,4 @@
-package com.example.auto_board_shell.command;
+package com.example.auto_board_shell.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Currency;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import com.sun.net.httpserver.HttpServer;
@@ -20,51 +21,10 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.example.auto_board_shell.helpers.CurrentUser;
 import org.json.JSONObject;
+import com.example.auto_board_shell.service.GoogleAuthService;
 
-@ShellComponent
-public class GoogleLoginShell {
-
-    private final HttpClient client = HttpClient.newHttpClient();
-    private String idToken;
-
-    @ShellMethod(key = "login", value = "Login to Google and fetch user info")
-    public void login() throws IOException, InterruptedException {
-        // Start local callback server
-        CompletableFuture<String> tokenFuture = startLocalCallbackServer();
-
-        // 1️⃣ Request login URL from API
-        HttpRequest loginRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/auth/login-url"))
-                .GET()
-                .build();
-
-        HttpResponse<String> loginResponse = client.send(loginRequest, HttpResponse.BodyHandlers.ofString());
-        String loginUrl = loginResponse.body();
-
-        System.out.println("Open this URL to log in: " + loginUrl);
-
-        // Open browser automatically using cmd
-        try {
-            new ProcessBuilder("cmd", "/c", "start", loginUrl).start();
-        } catch (IOException e) {
-            System.err.println("Failed to open browser: " + e.getMessage());
-        }
-
-        try {
-            // 2️⃣ Wait for user to authenticate and retrieve id token
-            idToken = tokenFuture.get(60, TimeUnit.SECONDS);
-
-            if (idToken != null) {
-                decodeAndStoreUserInfo(idToken);
-            } else {
-                System.err.println("Failed to retrieve id token.");
-            }
-        } catch (Exception e) {
-            System.err.println("Error during token retrieval: " + e.getMessage());
-        }
-    }
-
-    private CompletableFuture<String> startLocalCallbackServer() throws IOException {
+public class GoogleAuthService {
+    public static CompletableFuture<String> startLocalCallbackServer(HttpClient client) throws IOException {
         CompletableFuture<String> tokenFuture = new CompletableFuture<>();
         HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
         server.createContext("/auth/callback", new HttpHandler() {
@@ -116,7 +76,7 @@ public class GoogleLoginShell {
         return tokenFuture;
     }
 
-    private void decodeAndStoreUserInfo(String idToken) {
+    public static void decodeAndStoreUserInfo(String idToken) {
         try {
             CurrentUser.setToken(idToken);
 
@@ -130,6 +90,9 @@ public class GoogleLoginShell {
             // Set current user with first name
             CurrentUser.setUserName(firstName);
 
+            String userId = userInfoJson.optString("sub", null);
+            CurrentUser.setId(userId);
+
             // Store id token and user info in a file
             try (FileWriter fileWriter = new FileWriter("user_info.txt")) {
                 fileWriter.write("ID Token: " + idToken + "\n");
@@ -139,4 +102,43 @@ public class GoogleLoginShell {
             System.err.println("Failed to decode id token: " + e.getMessage());
         }
     }
+
+    public static void clearUserInfo() {
+        try {
+            CurrentUser.setToken(null);
+            CurrentUser.setUserName(null);
+            CurrentUser.setId(null);
+            new FileWriter("user_info.txt").close();
+        } catch (IOException e) {
+            System.err.println("Failed to delete user info: " + e.getMessage());
+        }
+    }
+
+    public static void deleteUserInfo() {
+        try {
+            CurrentUser.setUserName(null);
+
+            new FileWriter("user_info.txt").close();
+
+            // Call delete API to delete user info from the database
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/api/users/" + CurrentUser.getId()))
+                    .header("Authorization", CurrentUser.getToken())
+                    .DELETE()
+                    .build();
+            CurrentUser.setId(null);
+            CurrentUser.setToken(null);
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("User info deleted successfully from the database.");
+            } else {
+                System.err.println("Failed to delete user info from the database: " + response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Failed to delete user info: " + e.getMessage());
+        }
+    }
+
 }

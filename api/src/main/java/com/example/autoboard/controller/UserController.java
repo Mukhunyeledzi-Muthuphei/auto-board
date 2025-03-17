@@ -8,10 +8,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import com.example.autoboard.helpers.TokenHelper;
+import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
+    @Value("${google.client.id}")
+    private String clientId;
 
     @Autowired
     private UserService userService;
@@ -43,8 +48,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id, @RequestHeader("Authorization") String token) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(403).build();
+        }
+        if (!TokenHelper.parseIdToken(token).get("sub").equals(id)) {
+            return ResponseEntity.status(403).build();
+        }
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(200).build();
     }
 }

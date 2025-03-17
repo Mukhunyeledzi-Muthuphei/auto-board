@@ -2,7 +2,7 @@ package com.example.autoboard.service;
 
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.UserRepository;
-import com.example.helpers.TokenHelper;
+import com.example.autoboard.helpers.TokenHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

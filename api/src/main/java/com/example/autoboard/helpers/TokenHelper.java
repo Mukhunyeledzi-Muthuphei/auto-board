@@ -1,4 +1,4 @@
-package com.example.helpers;
+package com.example.autoboard.helpers;
 
 import com.google.auth.oauth2.TokenVerifier;
 import com.google.auth.oauth2.TokenVerifier.VerificationException;
