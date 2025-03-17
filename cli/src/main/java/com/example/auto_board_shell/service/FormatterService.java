@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import java.util.Scanner;
+
 @Service
 public class FormatterService {
+
+    private final Scanner scanner = new Scanner(System.in);
 
     // Overall project theme - orange
     public void printTheme(String text) {
@@ -60,9 +64,18 @@ public class FormatterService {
 
     private void printRow(List<String> row, List<Integer> colWidths) {
         String rowLine = IntStream.range(0, row.size())
-                .mapToObj(i -> String.format("| %-"+ colWidths.get(i) +"s ", row.get(i)))
+                .mapToObj(i -> String.format("| %-" + colWidths.get(i) + "s ", row.get(i)))
                 .collect(Collectors.joining()) + "|";
         System.out.println(rowLine);
+    }
+
+    public String prompt(String message) {
+        System.out.print(message);
+        return scanner.nextLine();
+    }
+
+    public void printSuccess(String message) {
+        System.out.println("\u001B[32m" + message + "\u001B[0m");
     }
 
 }

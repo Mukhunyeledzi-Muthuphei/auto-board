@@ -1,17 +1,22 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import com.example.auto_board_shell.service.RequestService;
+import com.example.auto_board_shell.service.FormatterService;
+import com.example.auto_board_shell.service.APIResponse;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.example.auto_board_shell.helpers.CurrentUser;
 
 @ShellComponent
 public class ProjectCommand {
@@ -27,22 +32,23 @@ public class ProjectCommand {
 
     // project-create --name "new pro" --status "2" --desc "from cli" --ownerId "google_user_101"
     @ShellMethod(key = "project-create", value = "Create a new project.")
-    public void createTask(
-            @ShellOption(value = "--name", help = "Project name") String name,
-            @ShellOption(value = "--desc", help = "Project description") String description,
-            @ShellOption(value = "--status", help = "Status ID") String statusId,
-            @ShellOption(value = "--ownerId", help = "ownerId") String ownerId
-    ) {
+    public void createTask() {
         try {
             formatterService.printInfo("Creating new project...");
 
+            String name = formatterService.prompt("Enter project name: ");
+            String description = formatterService.prompt("Enter project description: ");
+
             Map<String, Object> owner = new HashMap<>();
-            owner.put("id", ownerId);
+            owner.put("id", CurrentUser.getId());
+
+            Map<String, Object> status = new HashMap<>();
+            status.put("id", "1");
 
             Map<String, Object> project = new HashMap<>();
             project.put("name", name);
             project.put("description", description);
-            project.put("statusId", statusId);
+            project.put("status", status);
             project.put("owner", owner);
 
             APIResponse<Map<String, Object>> response = requestService.post(
@@ -110,7 +116,13 @@ public class ProjectCommand {
      */
     @ShellMethod(key = "project-delete", value = "Delete a project")
     public void deleteProject(
-            @ShellOption(value = "--id", help = "Project ID") String projectId
-    ) {}
+            @ShellOption(value = "--id", help = "Project ID") String projectId) {
+        try {
+            requestService.delete("/projects/" + projectId);
+            formatterService.printSuccess("Project deleted successfully!");
+        } catch (Exception e) {
+            System.err.println("Error fetching projects: " + e.getMessage());
+        }
+    }
 
 }

@@ -4,6 +4,7 @@ import com.example.autoboard.entity.Project;
 import com.example.autoboard.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import com.example.autoboard.entity.ProjectStatus;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByName(String name);
 
-    List<Project> findByStatusId(Long statusId);
+    List<Project> findByStatus(ProjectStatus status);
 
     List<Project> findByOwner(User owner);
 
