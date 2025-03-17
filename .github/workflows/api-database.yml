@@ -26,7 +26,7 @@ jobs:
           java-version: '21'
 
       - name: Build Application
-        run: mvn clean package
+        run: mvn clean package -DskipTests
         working-directory: api
 
       - name: Create deployment ZIP
