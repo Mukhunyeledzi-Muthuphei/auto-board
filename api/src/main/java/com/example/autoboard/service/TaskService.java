@@ -1,6 +1,7 @@
 package com.example.autoboard.service;
 
 import com.example.autoboard.entity.Task;
+import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.TaskRepository;
 
 import java.util.List;
@@ -19,25 +20,26 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAlltasks() {
-        return taskRepository.findAll();
+    public List<Task> getAlltasks(String userId) {
+        return taskRepository.findAllByUserId(userId);
     }
 
-public Task getTaskById(Long id) {
-    Optional<Task> taskOptional = taskRepository.findById(id);
-    return taskOptional.orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
-}
-
-    public List<Task> getTasksByStatus(Long statusId) {
-        return taskRepository.findByStatusId(statusId);
+    public Task getTaskById(Long id, String userId) {
+        Optional<Task> taskOptional = taskRepository.findByIdAndUserId(id, userId);
+        return taskOptional.orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
-    public Task createTask(Task task) {
+    public List<Task> getTasksByStatus(Long statusId, String userId) {
+        return taskRepository.findByStatusIdAndUserId(statusId, userId);
+    }
+
+    public Task createTask(Task task, String userId) {
+        task.setAssignee(userId);
         return taskRepository.save(task);
     }
 
-    public Task updateTask(Long id, Task task) {
-        Task existingTask = getTaskById(id);
+    public Task updateTask(Long id, Task task, String userId) {
+        Task existingTask = getTaskById(id, userId);
         existingTask.setTitle(task.getTitle());
         existingTask.setDescription(task.getDescription());
         existingTask.setStatus(task.getStatus());
@@ -46,11 +48,14 @@ public Task getTaskById(Long id) {
         return taskRepository.save(existingTask);
     }
 
-    public void deleteTask(Long id) {
+    public void deleteTask(Long id, String userId) {
         if (!taskRepository.existsById(id)) {
             throw new RuntimeException("Task not found with id: " + id);
         }
+        else{
         taskRepository.deleteById(id);
+        }
+        
     }
 
 }
