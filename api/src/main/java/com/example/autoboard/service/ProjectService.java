@@ -27,10 +27,13 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project updateProject(Long id, Project projectDetails) {
+    public Project updateProject(Long id, Project projectDetails, String userId) {
         Optional<Project> projectOptional = projectRepository.findById(id);
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
+            if (!project.getOwner().getId().equals(userId)) {
+                return null;
+            }
             project.setName(projectDetails.getName());
             project.setDescription(projectDetails.getDescription());
             // Update other fields as necessary
@@ -40,12 +43,15 @@ public class ProjectService {
         }
     }
 
-    public boolean deleteProject(Long id) {
-        if (projectRepository.existsById(id)) {
-            projectRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+    public boolean deleteProject(Long id, String userId) {
+        Optional<Project> projectOptional = projectRepository.findById(id);
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            if (project.getOwner().getId().equals(userId)) {
+                projectRepository.deleteById(id);
+                return true;
+            }
         }
+        return false;
     }
 }
