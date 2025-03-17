@@ -23,7 +23,7 @@ jobs:
           java-version: "21"
       - name: Check Working Directory
         run: |
-          ls
+          ls api/src/main/resources
       - name: Replace secrets in application.properties
         run: |
           envsubst < src/main/resources/application.properties > src/main/resources/application.properties
