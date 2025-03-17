@@ -1,12 +1,16 @@
 package com.example.autoboard.controller;
 
 import com.example.autoboard.entity.Project;
+import com.example.autoboard.entity.ProjectMember;
+import com.example.autoboard.service.ProjectMemberService;
 import com.example.autoboard.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.example.autoboard.helpers.TokenHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,19 +25,53 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private ProjectMemberService projectMemberService;
+
     @GetMapping
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
+    public ResponseEntity<List<Project>> getAllProjects(
+            @RequestHeader("Authorization") String token
+    ) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        List<Project> projects = projectService.getAllProjects();
+
+        List<Project> allowedProjects = projects.stream()
+                .filter(project ->
+                        project.getOwner().getId().equals(userId) ||
+                                !projectMemberService.getProjectMembersByProject(project, userId).isEmpty()
+                )
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(allowedProjects);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        Project project = projectService.getProjectById(id);
-        if (project != null) {
-            return ResponseEntity.ok(project);
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProjectById(@PathVariable String projectId,
+                                                  @RequestHeader("Authorization") String token) {
+
+        Long id =  Long.parseLong(projectId);
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        Project project = projectService.getProjectById(id);
+
+        if (project == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // Check if the user is the project owner or a member
+        List<ProjectMember> projectMembers = projectMemberService.getProjectMembersByProject(project, userId);
+        if (!project.getOwner().getId().equals(userId) && projectMembers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return ResponseEntity.ok(project);
     }
 
     @PostMapping

@@ -110,6 +110,45 @@ public class ProjectCommand {
         }
     }
 
+    @ShellMethod(key = "project-view-id", value = "List a user's projects with project ID")
+    public void getUserProjectsById(
+            @ShellOption(value = "--id", help = "Project ID") String projectId
+    ) {
+        try {
+            formatterService.printInfo("Fetching associated project");
+
+            APIResponse<Map<String, Object>> response = requestService.get("/projects/" + projectId, new ParameterizedTypeReference<Map<String, Object>>() {});
+
+            Map<String, Object> project = response.getData();
+
+            List<String> selectedHeaders = List.of("id", "name", "description", "owner_id");
+
+            List<String> headers = new ArrayList<>(selectedHeaders);
+
+            if (project == null || project.isEmpty()) {
+                formatterService.printWarning("No project found for ID: " + projectId);
+                return;
+            }
+
+            List<List<String>> data = List.of(selectedHeaders.stream()
+                    .map(key -> {
+                        if (key.equals("owner_id")) {
+                            // Extract from nested 'owner' field
+                            Map<String, Object> owner = (Map<String, Object>) project.get("owner");
+                            return owner != null ? String.valueOf(owner.getOrDefault("id", "N/A")) : "N/A";
+                        } else {
+                            return String.valueOf(project.getOrDefault(key, "N/A"));
+                        }
+                    })
+                    .collect(Collectors.toList()));
+
+            formatterService.printTable(headers, data);
+
+        } catch (Exception e) {
+            formatterService.printError("Error fetching projects: " + e.getMessage());
+        }
+    }
+
     /**
      * TODO - Method should delete a project and all tasks associated
      * ONLY allow delete if JWT ID makes owner_id makes request
