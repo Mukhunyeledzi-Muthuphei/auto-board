@@ -1,11 +1,14 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import com.example.auto_board_shell.service.RequestService;
+import com.example.auto_board_shell.service.FormatterService;
+import com.example.auto_board_shell.service.APIResponse;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +36,8 @@ public class ProjectCommand {
         try {
             formatterService.printInfo("Creating new project...");
 
-            String name = shellService.prompt("Enter project name: ");
-            String description = shellService.prompt("Enter project description: ");
+            String name = formatterService.prompt("Enter project name: ");
+            String description = formatterService.prompt("Enter project description: ");
 
             Map<String, Object> owner = new HashMap<>();
             owner.put("id", CurrentUser.getId());
@@ -115,8 +118,8 @@ public class ProjectCommand {
     public void deleteProject(
             @ShellOption(value = "--id", help = "Project ID") String projectId) {
         try {
-            apiService.delete("/projects/" + projectId, Object.class);
-            shellService.printSuccess("Project deleted successfully!");
+            requestService.delete("/projects/" + projectId);
+            formatterService.printSuccess("Project deleted successfully!");
         } catch (Exception e) {
             System.err.println("Error fetching projects: " + e.getMessage());
         }
