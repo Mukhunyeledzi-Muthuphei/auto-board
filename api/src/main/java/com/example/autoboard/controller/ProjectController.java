@@ -1,8 +1,6 @@
 package com.example.autoboard.controller;
 
 import com.example.autoboard.entity.Project;
-import com.example.autoboard.entity.ProjectMember;
-import com.example.autoboard.service.ProjectMemberService;
 import com.example.autoboard.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +21,6 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private ProjectMemberService projectMemberService;
 
     // Get all projects that a user is associated with
     @GetMapping
