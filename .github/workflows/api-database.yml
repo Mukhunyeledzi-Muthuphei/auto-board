@@ -19,6 +19,13 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
+      - name: Replace secrets in application.properties
+        run: |
+          envsubst < src/main/resources/application.properties.template > src/main/resources/application.properties
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+
       - name: Build with Maven
         working-directory: ./api
         run: mvn clean package -DskipTests
