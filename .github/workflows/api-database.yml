@@ -30,7 +30,9 @@ jobs:
         working-directory: api
 
       - name: Create deployment ZIP
-        run: zip -r deploy.zip api/target/*.jar
+        run: |
+          cp api/target/*.jar ./
+          zip -r deploy.zip ./*.jar
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v3
