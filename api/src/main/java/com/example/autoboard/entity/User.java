@@ -25,6 +25,10 @@ public class User {
     public User() {
     }
 
+    public User(String user_id) {
+        this.user_id = user_id;
+    }
+
     public String getId() {
         return user_id;
     }

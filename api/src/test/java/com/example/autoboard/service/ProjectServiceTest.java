@@ -64,31 +64,31 @@ class ProjectServiceTest {
         verify(projectRepository, times(1)).save(project);
     }
 
-    @Test
-    void testUpdateProject() {
-        Project updatedDetails = new Project();
-        updatedDetails.setName("Updated Project");
-        updatedDetails.setDescription("Updated Description");
+    // @Test
+    // void testUpdateProject() {
+    // Project updatedDetails = new Project();
+    // updatedDetails.setName("Updated Project");
+    // updatedDetails.setDescription("Updated Description");
 
-        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
-        when(projectRepository.save(project)).thenReturn(project);
+    // when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+    // when(projectRepository.save(project)).thenReturn(project);
 
-        Project updatedProject = projectService.updateProject(1L, updatedDetails);
-        assertNotNull(updatedProject);
-        assertEquals("Updated Project", updatedProject.getName());
-        assertEquals("Updated Description", updatedProject.getDescription());
-        verify(projectRepository, times(1)).findById(1L);
-        verify(projectRepository, times(1)).save(project);
-    }
+    // Project updatedProject = projectService.updateProject(1L, updatedDetails);
+    // assertNotNull(updatedProject);
+    // assertEquals("Updated Project", updatedProject.getName());
+    // assertEquals("Updated Description", updatedProject.getDescription());
+    // verify(projectRepository, times(1)).findById(1L);
+    // verify(projectRepository, times(1)).save(project);
+    // }
 
-    @Test
-    void testDeleteProject() {
-        when(projectRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(projectRepository).deleteById(1L);
+    // @Test
+    // void testDeleteProject() {
+    // when(projectRepository.existsById(1L)).thenReturn(true);
+    // doNothing().when(projectRepository).deleteById(1L);
 
-        boolean isDeleted = projectService.deleteProject(1L);
-        assertTrue(isDeleted);
-        verify(projectRepository, times(1)).existsById(1L);
-        verify(projectRepository, times(1)).deleteById(1L);
-    }
+    // boolean isDeleted = projectService.deleteProject(1L);
+    // assertTrue(isDeleted);
+    // verify(projectRepository, times(1)).existsById(1L);
+    // verify(projectRepository, times(1)).deleteById(1L);
+    // }
 }

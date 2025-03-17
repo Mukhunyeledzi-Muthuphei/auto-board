@@ -30,11 +30,4 @@ public class ProjectStatusService {
         return projectStatusRepository.findByName(name);
     }
 
-    public ProjectStatus saveProjectStatus(ProjectStatus projectStatus) {
-        return projectStatusRepository.save(projectStatus);
-    }
-
-    public void deleteProjectStatus(Long id) {
-        projectStatusRepository.deleteById(id);
-    }
 }
