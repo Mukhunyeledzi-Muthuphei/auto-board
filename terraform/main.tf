@@ -239,7 +239,7 @@ resource "aws_elastic_beanstalk_environment" "auto_board_env" {
  setting {
    namespace         ="aws:elasticbeanstalk:application:environment"
    name              ="DB_HOST_URL"
-   value             ="${aws_db_instance.auto-board-db.address}"
+   value             = "jdbc:postgresql://${aws_db_instance.auto-board-db.address}:5432/${aws_db_instance.auto-board-db.db_name}"
  }
 
  setting {
