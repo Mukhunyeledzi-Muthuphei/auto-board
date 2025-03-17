@@ -1,4 +1,4 @@
-package com.example.helpers;
+package com.example.autoboard.helpers;
 
 import com.google.auth.oauth2.TokenVerifier;
 import com.google.auth.oauth2.TokenVerifier.VerificationException;
@@ -28,5 +28,10 @@ public class TokenHelper {
                 "sub", jsonObject.get("sub").getAsString(),
                 "given_name", jsonObject.get("given_name").getAsString(),
                 "family_name", jsonObject.get("family_name").getAsString());
+    }
+
+    public static String extractUserIdFromToken(String idToken) {
+        Map<String, Object> tokenPayload = parseIdToken(idToken);
+        return (String) tokenPayload.get("sub");
     }
 }

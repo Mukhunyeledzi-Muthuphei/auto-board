@@ -7,10 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.example.autoboard.helpers.TokenHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
+
+    @Value("${google.client.id}")
+    private String clientId;
 
     @Autowired
     private ProjectService projectService;
@@ -31,13 +37,27 @@ public class ProjectController {
     }
 
     @PostMapping
-    public Project createProject(@RequestBody Project project) {
-        return projectService.createProject(project);
+    public ResponseEntity<Project> createProject(@RequestBody Project project,
+            @RequestHeader("Authorization") String token) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        if (!project.getOwner().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Project createdProject = projectService.createProject(project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails) {
-        Project updatedProject = projectService.updateProject(id, projectDetails);
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails,
+            @RequestHeader("Authorization") String token) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.notFound().build();
+        }
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        Project updatedProject = projectService.updateProject(id, projectDetails, userId);
         if (updatedProject != null) {
             return ResponseEntity.ok(updatedProject);
         } else {
@@ -46,8 +66,12 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        boolean isDeleted = projectService.deleteProject(id);
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.notFound().build();
+        }
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        boolean isDeleted = projectService.deleteProject(id, userId);
         if (isDeleted) {
             return ResponseEntity.noContent().build();
         } else {
