@@ -1,5 +1,7 @@
 name: Deploy to Elastic Beanstalk
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [ndzalama/feat/deployment]
     paths-ignore:
