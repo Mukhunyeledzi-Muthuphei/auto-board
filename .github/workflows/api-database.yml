@@ -27,9 +27,10 @@ jobs:
 
       - name: Build Application
         run: mvn clean package
+        working-directory: api
 
       - name: Create deployment ZIP
-        run: zip -r deploy.zip target/*.jar
+        run: zip -r deploy.zip api/target/*.jar
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v3
