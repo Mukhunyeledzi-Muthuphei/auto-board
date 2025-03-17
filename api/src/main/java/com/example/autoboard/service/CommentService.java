@@ -1,6 +1,7 @@
 package com.example.autoboard.service;
 
 import com.example.autoboard.entity.Comment;
+import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Optional<Comment> getCommentById(Long id) {
+    public Optional<Comment> getCommentById(Long id, User user) {
         return commentRepository.findById(id);
     }
 
@@ -27,15 +28,15 @@ public class CommentService {
         return commentRepository.findAll();
     }
 
-    public Comment updateComment(Comment comment) {
+    public Comment updateComment(Comment comment, User user) {
         return commentRepository.save(comment);
     }
 
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, User user) {
         commentRepository.deleteById(id);
     }
 
-    public List<Comment> getCommentsByTaskId(long l) {
+    public List<Comment> getCommentsByTaskId(long l, User user) {
         return commentRepository.findByTaskId(l);
     }
 }

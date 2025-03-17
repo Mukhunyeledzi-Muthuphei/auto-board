@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskService {
 
+    @Autowired
     private final TaskRepository taskRepository;
 
     @Autowired
@@ -20,26 +21,26 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAlltasks(String userId) {
-        return taskRepository.findAllByUserId(userId);
+    public List<Task> getAlltasks() {
+        return taskRepository.findAll();
     }
 
-    public Task getTaskById(Long id, String userId) {
-        Optional<Task> taskOptional = taskRepository.findByIdAndUserId(id, userId);
+    public Task getTaskById(Long id, User assignee) {
+        Optional<Task> taskOptional = taskRepository.findByIdAndAssignee(id, assignee);
         return taskOptional.orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
-    public List<Task> getTasksByStatus(Long statusId, String userId) {
-        return taskRepository.findByStatusIdAndUserId(statusId, userId);
+    public List<Task> getTasksByStatus(Long statusId, User assignee) {
+        return taskRepository.findByStatusIdAndAssignee(statusId, assignee);
     }
 
-    public Task createTask(Task task, String userId) {
-        task.setAssignee(userId);
+    public Task createTask(Task task, User assignee) {
+        task.setAssignee(assignee);
         return taskRepository.save(task);
     }
 
-    public Task updateTask(Long id, Task task, String userId) {
-        Task existingTask = getTaskById(id, userId);
+    public Task updateTask(Long id, Task task, User assignee) {
+        Task existingTask = getTaskById(id, assignee);
         existingTask.setTitle(task.getTitle());
         existingTask.setDescription(task.getDescription());
         existingTask.setStatus(task.getStatus());
@@ -48,7 +49,7 @@ public class TaskService {
         return taskRepository.save(existingTask);
     }
 
-    public void deleteTask(Long id, String userId) {
+    public void deleteTask(Long id, String assignee) {
         if (!taskRepository.existsById(id)) {
             throw new RuntimeException("Task not found with id: " + id);
         }
