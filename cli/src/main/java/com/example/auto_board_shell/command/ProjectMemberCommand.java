@@ -1,16 +1,11 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.service.APIService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
 public class ProjectMemberCommand {
-
-    @Autowired
-    private APIService apiService;
 
     // project-member-add --projectId 2 --userId 5
     @ShellMethod(key = "project-member-add", value = "View comments for a task")

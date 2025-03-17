@@ -1,6 +1,6 @@
 package com.example.auto_board_shell.command;
 
-import com.example.auto_board_shell.service.APIService;
+import com.example.auto_board_shell.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -10,7 +10,7 @@ import org.springframework.shell.standard.ShellOption;
 public class CommentCommand {
 
     @Autowired
-    private APIService apiService;
+    private RequestService requestService;
 
     // comments-view --taskId 2
     @ShellMethod(key = "comments-view", value = "View comments for a task")
