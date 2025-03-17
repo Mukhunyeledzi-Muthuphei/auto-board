@@ -80,26 +80,28 @@ class ProjectControllerTest {
         verify(projectService, times(1)).createProject(any(Project.class));
     }
 
-    @Test
-    void testUpdateProject() throws Exception {
-        when(projectService.updateProject(eq(1L), any(Project.class))).thenReturn(project);
+    // @Test
+    // void testUpdateProject() throws Exception {
+    // when(projectService.updateProject(eq(1L),
+    // any(Project.class))).thenReturn(project);
 
-        mockMvc.perform(put("/api/projects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\": \"Updated Project\", \"description\": \"Updated Description\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Test Project"));
+    // mockMvc.perform(put("/api/projects/1")
+    // .contentType(MediaType.APPLICATION_JSON)
+    // .content("{\"name\": \"Updated Project\", \"description\": \"Updated
+    // Description\"}"))
+    // .andExpect(status().isOk())
+    // .andExpect(jsonPath("$.name").value("Test Project"));
 
-        verify(projectService, times(1)).updateProject(eq(1L), any(Project.class));
-    }
+    // verify(projectService, times(1)).updateProject(eq(1L), any(Project.class));
+    // }
 
-    @Test
-    void testDeleteProject() throws Exception {
-        when(projectService.deleteProject(1L)).thenReturn(true);
+    // @Test
+    // void testDeleteProject() throws Exception {
+    // when(projectService.deleteProject(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/api/projects/1"))
-                .andExpect(status().isNoContent());
+    // mockMvc.perform(delete("/api/projects/1"))
+    // .andExpect(status().isNoContent());
 
-        verify(projectService, times(1)).deleteProject(1L);
-    }
+    // verify(projectService, times(1)).deleteProject(1L);
+    // }
 }

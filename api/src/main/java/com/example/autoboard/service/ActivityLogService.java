@@ -27,7 +27,7 @@ public class ActivityLogService {
     }
 
     public List<ActivityLog> getAllLogs(String userId) {
-        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId));
+        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
         return activityLogRepository.findAll().stream()
                 .filter(log -> userProjects.stream()
                         .anyMatch(member -> member.getProject().getId().equals(log.getTask().getProject().getId())))
@@ -38,7 +38,7 @@ public class ActivityLogService {
         Optional<ActivityLog> log = activityLogRepository.findById(id);
         if (log.isPresent()) {
             Project project = log.get().getTask().getProject();
-            List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId));
+            List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
             boolean isMember = userProjects.stream()
                     .anyMatch(member -> member.getProject().getId().equals(project.getId()));
             if (isMember) {
@@ -49,7 +49,7 @@ public class ActivityLogService {
     }
 
     public List<ActivityLog> getLogsByTaskId(Long taskId, String userId) {
-        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId));
+        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
         return activityLogRepository.findByTaskId(taskId).stream()
                 .filter(log -> userProjects.stream()
                         .anyMatch(member -> member.getProject().getId().equals(log.getTask().getProject().getId())))

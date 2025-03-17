@@ -7,6 +7,7 @@ import com.example.autoboard.service.ProjectMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,9 @@ import com.example.autoboard.helpers.TokenHelper;
 @RequestMapping("/api/project-members")
 public class ProjectMemberController {
 
+    @Value("${google.client.id}")
+    private String clientId;
+
     private final ProjectMemberService projectMemberService;
 
     @Autowired
@@ -23,20 +27,11 @@ public class ProjectMemberController {
         this.projectMemberService = projectMemberService;
     }
 
-    @GetMapping
-    public List<ProjectMember> getAllProjectMembers(@RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
-            return List.of();
-        }
-        String userId = extractUserIdFromToken(token);
-        return projectMemberService.getAllProjectMembers(userId);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ProjectMember> getProjectMemberById(@PathVariable Long id,
             @RequestHeader("Authorization") String token) {
         String userId = extractUserIdFromToken(token);
-        if (!TokenHelper.isValidIdToken(token)) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.notFound().build();
         }
         Optional<ProjectMember> projectMember = projectMemberService.getProjectMemberById(id, userId);
@@ -46,8 +41,8 @@ public class ProjectMemberController {
     @GetMapping("/project/{projectId}")
     public List<ProjectMember> getProjectMembersByProject(@PathVariable Long projectId,
             @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
-            return ResponseEntity.notFound().build();
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return List.of();
         }
         String userId = extractUserIdFromToken(token);
         Project project = new Project();
@@ -58,8 +53,8 @@ public class ProjectMemberController {
     @GetMapping("/user/{userId}")
     public List<ProjectMember> getProjectMembersByUser(@PathVariable String userId,
             @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
-            return ResponseEntity.notFound().build();
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return List.of();
         }
         String userIdFromToken = extractUserIdFromToken(token);
         if (!userId.equals(userIdFromToken)) {
@@ -67,14 +62,14 @@ public class ProjectMemberController {
         }
         User user = new User();
         user.setId(userId);
-        return projectMemberService.getProjectMembersByUser(user);
+        return projectMemberService.getProjectMembersByUser(user, userId);
     }
 
     @PostMapping
     public ProjectMember createProjectMember(@RequestBody ProjectMember projectMember,
             @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
-            return ResponseEntity.notFound().build();
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return null;
         }
         String userId = extractUserIdFromToken(token);
         projectMember.setUser(new User(userId));
@@ -84,7 +79,7 @@ public class ProjectMemberController {
     @PutMapping("/{id}")
     public ResponseEntity<ProjectMember> updateProjectMember(@PathVariable Long id,
             @RequestBody ProjectMember projectMember, @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.notFound().build();
         }
         String userId = extractUserIdFromToken(token);
@@ -100,7 +95,7 @@ public class ProjectMemberController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjectMember(@PathVariable Long id,
             @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(token)) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.notFound().build();
         }
         String userId = extractUserIdFromToken(token);

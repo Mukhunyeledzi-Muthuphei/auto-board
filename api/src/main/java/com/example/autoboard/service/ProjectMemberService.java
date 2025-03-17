@@ -20,20 +20,26 @@ public class ProjectMemberService {
         this.projectMemberRepository = projectMemberRepository;
     }
 
-    public List<ProjectMember> getAllProjectMembers() {
-        return projectMemberRepository.findAll();
+    public Optional<ProjectMember> getProjectMemberById(Long id, String userId) {
+        Optional<ProjectMember> projectMember = projectMemberRepository.findById(id);
+        if (projectMember.isPresent() && projectMember.get().getUser().getId().equals(userId)) {
+            return projectMember;
+        }
+        return Optional.empty();
     }
 
-    public Optional<ProjectMember> getProjectMemberById(Long id) {
-        return projectMemberRepository.findById(id);
+    public List<ProjectMember> getProjectMembersByProject(Project project, String userId) {
+        List<ProjectMember> projectMembers = projectMemberRepository.findByProject(project);
+        return projectMembers.stream()
+                .filter(pm -> pm.getUser().getId().equals(userId))
+                .toList();
     }
 
-    public List<ProjectMember> getProjectMembersByProject(Project project) {
-        return projectMemberRepository.findByProject(project);
-    }
-
-    public List<ProjectMember> getProjectMembersByUser(User user) {
-        return projectMemberRepository.findByUser(user);
+    public List<ProjectMember> getProjectMembersByUser(User user, String userId) {
+        if (user.getId().equals(userId)) {
+            return projectMemberRepository.findByUser(user);
+        }
+        return List.of();
     }
 
     public ProjectMember saveProjectMember(ProjectMember projectMember) {
