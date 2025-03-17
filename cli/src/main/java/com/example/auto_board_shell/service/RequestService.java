@@ -36,9 +36,14 @@ public class RequestService {
         }
     }
 
-    public <T, R> APIResponse<T> post(String endpoint, R request, Class<T> responseType) {
+    public <T, R> APIResponse<T> post(String endpoint, R request, ParameterizedTypeReference<T> responseType) {
         try {
-            ResponseEntity<T> response = restTemplate.postForEntity(buildUrl(endpoint), request, responseType);
+            ResponseEntity<T> response = restTemplate.exchange(
+                    buildUrl(endpoint),
+                    HttpMethod.POST,
+                    new HttpEntity<>(request),
+                    responseType
+            );
             return new APIResponse<>(response.getStatusCode().value(), "Success", response.getBody());
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -49,6 +54,7 @@ public class RequestService {
             return new APIResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred: " + e.getMessage(), null);
         }
     }
+
 
     public <T, R> APIResponse<T> put(String endpoint, R request, Class<T> responseType) {
         try {

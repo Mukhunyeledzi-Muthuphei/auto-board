@@ -81,22 +81,26 @@ public class UserCommand {
 
     @ShellMethod(key = "users-search-by-id", value = "Search users by ID")
     public void usersSearchById(
-            @ShellOption(value = "--id", help = "User ID") int id
+            @ShellOption(value = "--id", help = "User ID") String id
     ) {
         try {
             formatterService.printInfo("Searching for user with ID: " + id);
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/users/id/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/users/" + id, new ParameterizedTypeReference<Map<String, Object>>() {});
 
-            List<Map<String, Object>> users = response.getData();
+            Map<String, Object> user = response.getData();
 
-            List<String> headers = new ArrayList<>(users.get(0).keySet());
+            if (user == null || user.isEmpty()) {
+                formatterService.printWarning("No user found with ID: " + id);
+                return;
+            }
 
-            List<List<String>> data = users.stream()
-                    .map(status -> headers.stream()
-                            .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+            List<String> selectedHeaders = List.of("id", "firstName", "lastName");
+            List<String> headers = new ArrayList<>(selectedHeaders);
+
+            List<List<String>> data = List.of(headers.stream()
+                    .map(key -> String.valueOf(user.getOrDefault(key, "N/A")))
+                    .collect(Collectors.toList()));
 
             formatterService.printTable(headers, data);
 

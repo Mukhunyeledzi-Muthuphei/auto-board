@@ -45,10 +45,25 @@ public class ProjectCommand {
             project.put("statusId", statusId);
             project.put("owner", owner);
 
-            Object createdProject = requestService.post("/projects", project, Object.class);
-            Map<String, Object> projectResult = (Map<String, Object>) createdProject;
-            formatterService.printInfo("ID: " + projectResult.get("id"));
-            formatterService.printInfo("Name: " + projectResult.get("name"));
+            APIResponse<Map<String, Object>> response = requestService.post(
+                    "/projects",
+                    project,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+
+            if (response.getData() == null) {
+                formatterService.printError("Failed to create project: " + response.getMessage());
+                return;
+            }
+
+            Object data = response.getData();
+            if (data instanceof Map) {
+                Map<String, Object> projectResult = (Map<String, Object>) data;
+                formatterService.printInfo("ID: " + projectResult.get("id"));
+                formatterService.printInfo("Name: " + projectResult.get("name"));
+            } else {
+                formatterService.printError("Unexpected response type: " + data.getClass().getName());
+            }
 
         } catch (Exception e) {
             formatterService.printError("Error creating project: " + e.getMessage());
@@ -64,11 +79,21 @@ public class ProjectCommand {
 
             List<Map<String, Object>> projects = response.getData();
 
-            List<String> headers = new ArrayList<>(projects.get(0).keySet());
+            List<String> selectedHeaders = List.of("id", "name", "description", "owner_id");
+
+            List<String> headers = new ArrayList<>(selectedHeaders);
 
             List<List<String>> data = projects.stream()
-                    .map(status -> headers.stream()
-                            .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
+                    .map(row -> selectedHeaders.stream()
+                            .map(key -> {
+                                if (key.equals("owner_id")) {
+                                    // Extract from nested 'user' field
+                                    Map<String, Object> owner = (Map<String, Object>) row.get("owner");
+                                    return owner != null ? String.valueOf(owner.getOrDefault("id", "N/A")) : "N/A";
+                                } else {
+                                    return String.valueOf(row.getOrDefault(key, "N/A"));
+                                }
+                            })
                             .collect(Collectors.toList()))
                     .collect(Collectors.toList());
 
