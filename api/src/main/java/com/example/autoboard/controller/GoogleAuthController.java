@@ -8,7 +8,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import com.example.helpers.TokenHelper;
+import com.example.autoboard.helpers.TokenHelper;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.UserRepository;
 import com.example.autoboard.service.GoogleAuthService;
