@@ -63,7 +63,7 @@ resource "aws_iam_role" "beanstalk_role" {
 
 // Database instance creation
 resource "aws_db_instance" "auto-board-db" {
-  identifier = "auto-board-db-instance"
+  identifier           = "auto-board-db-instance"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
@@ -164,10 +164,24 @@ resource "aws_s3_bucket" "beanstalk_bucket" {
 
 }
 
+resource "aws_s3_object" "beanstalk_zip" {
+  bucket = aws_s3_bucket.beanstalk_bucket.id
+  key    = "deploy.zip"
+  source = "../deploy.zip" #local path to zip file
+}
+
+resource "aws_elastic_beanstalk_application_version" "auto_board-version" {
+  name        = "v1"
+  application = aws_elastic_beanstalk_application.auto_board.name
+  bucket      = aws_s3_bucket.beanstalk_bucket.id
+  key         = aws_s3_object.beanstalk_zip.key
+}
+
 resource "aws_elastic_beanstalk_environment" "auto_board_env" {
   name                = "auto-board-env"
   application         = aws_elastic_beanstalk_application.auto_board.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.4.4 running Corretto 21"
+  version_label       = aws_elastic_beanstalk_application_version.auto_board-version.name
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
@@ -239,7 +253,7 @@ resource "aws_elastic_beanstalk_environment" "auto_board_env" {
  setting {
    namespace         ="aws:elasticbeanstalk:application:environment"
    name              ="DB_HOST_URL"
-   value             = "jdbc:postgresql://${aws_db_instance.auto-board-db.address}:5432/${aws_db_instance.auto-board-db.db_name}"
+   value             = "${aws_db_instance.auto-board-db.address}"
  }
 
  setting {

@@ -1,10 +1,8 @@
 name: Deploy to Elastic Beanstalk
-
 on:
   push:
-    branches:
-      - ndzalama/feat/deployment
-    paths:
+    branches: [ndzalama/feat/deployment]
+    paths-ignore:
       - "src/**"
       - "pom.xml"
       - ".github/workflows/api-database.yml"
@@ -14,61 +12,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
 
-      - name: Build Application
-        id: build_app
+      - name: Build with Maven
+        working-directory: ./api
         run: mvn clean package -DskipTests
-        working-directory: api
 
-      - name: Create deployment ZIP
-        id: create_zip
-        if: steps.build_app.outcome == 'success'
-        run: |
-          cp api/target/*.jar ./
-          zip -r deploy.zip ./*.jar
-
-      - name: Configure AWS CLI
-        id: configure_aws
-        if: steps.create_zip.outcome == 'success'
-        uses: aws-actions/configure-aws-credentials@v3
+      - uses: einaregilsson/beanstalk-deploy@v21
         with:
-          aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.RDS_IAM_USER_SECRET_KEY}}
-          aws-region: af-south-1
-
-      - name: Upload ZIP to S3 Bucket
-        id: upload_s3
-        if: steps.configure_aws.outcome == 'success'
-        run: |
-          aws s3 cp deploy.zip s3://auto-board-bucket/deploy.zip
-
-      - name: Create Elastic Beanstalk Application Version
-        id: create_eb_version
-        if: steps.upload_s3.outcome == 'success'
-        run: |
-          VERSION_LABEL="deploy-${{ github.run_number }}-$(date +%s)"
-          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
-          aws elasticbeanstalk create-application-version \
-            --application-name auto-board \
-            --version-label "$VERSION_LABEL" \
-            --source-bundle S3Bucket=auto-board-bucket,S3Key=deploy.zip \
-            --region af-south-1
-
-      - name: Update Elastic Beanstalk Environment
-        id: update_eb_env
-        if: steps.create_eb_version.outcome == 'success'
-        run: |
-          aws elasticbeanstalk update-environment \
-            --environment-name auto-board-env \
-            --version-label "$VERSION_LABEL" \
-            --region af-south-1
+          aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+          region: ${{ secrets.AWS_REGION }}
+          application_name: auto-board
+          environment_name: auto-board-env
+          version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
+          deployment_package: api/target/autoboard-0.0.1-SNAPSHOT.jar
