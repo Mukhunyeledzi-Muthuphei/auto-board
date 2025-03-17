@@ -36,6 +36,11 @@ public class ActivityLogController {
         return activityLogService.getLogsByTaskId(taskId);
     }
 
+    @GetMapping("/project/{projectId}")
+    public List<ActivityLog> getActivityLogsByProjectId(@PathVariable Long projectId) {
+        return activityLogService.getActivityLogsByProjectId(projectId);
+    }
+
     // TODO REMOVE LATER
     // @PostMapping
     // public ResponseEntity<ActivityLog> createLog(@RequestBody ActivityLog log) {

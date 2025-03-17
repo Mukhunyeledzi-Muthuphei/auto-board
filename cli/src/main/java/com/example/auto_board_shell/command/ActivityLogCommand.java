@@ -31,8 +31,36 @@ public class ActivityLogCommand {
     public void activityLogProject(
             @ShellOption(value = "--id", help = "Project id") String id
     ) {
-        // TODO print out logs for all tasks associated to a project (user must have access)
+        try {
+            formatterService.printInfo("Fetching project activity log");
 
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/project/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+
+            List<Map<String, Object>> taskActivityLog = response.getData();
+
+            List<String> selectedHeaders = List.of("task_id", "title", "action", "timestamp", "id");
+
+            List<String> headers = new ArrayList<>(selectedHeaders);
+
+            List<List<String>> data = taskActivityLog.stream()
+                    .map(row -> selectedHeaders.stream()
+                            .map(key -> {
+                                if (key.equals("task_id") || key.equals("title")) {
+                                    // Extract from nested 'task' field
+                                    Map<String, Object> task = (Map<String, Object>) row.get("task");
+                                    return task != null ? String.valueOf(task.getOrDefault(key.equals("task_id") ? "id" : "title", "N/A")) : "N/A";
+                                } else {
+                                    return String.valueOf(row.getOrDefault(key, "N/A"));
+                                }
+                            })
+                            .collect(Collectors.toList()))
+                    .collect(Collectors.toList());
+
+            formatterService.printTable(headers, data);
+
+        } catch (Exception e) {
+            formatterService.printError("Error fetching project activity log: " + e.getMessage());
+        }
     }
 
     // activity-log-task --id 2
