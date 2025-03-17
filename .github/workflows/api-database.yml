@@ -26,15 +26,20 @@ jobs:
           java-version: "21"
 
       - name: Build Application
+        id: build_app
         run: mvn clean package -DskipTests
         working-directory: api
 
       - name: Create deployment ZIP
+        id: create_zip
+        if: steps.build_app.outcome == 'success'
         run: |
           cp api/target/*.jar ./
           zip -r deploy.zip ./*.jar
 
       - name: Configure AWS CLI
+        id: configure_aws
+        if: steps.create_zip.outcome == 'success'
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
@@ -42,10 +47,14 @@ jobs:
           aws-region: af-south-1
 
       - name: Upload ZIP to S3 Bucket
+        id: upload_s3
+        if: steps.configure_aws.outcome == 'success'
         run: |
           aws s3 cp deploy.zip s3://auto-board-bucket/deploy.zip
 
       - name: Create Elastic Beanstalk Application Version
+        id: create_eb_version
+        if: steps.upload_s3.outcome == 'success'
         run: |
           VERSION_LABEL="deploy-${{ github.run_number }}-$(date +%s)"
           echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
@@ -56,6 +65,8 @@ jobs:
             --region af-south-1
 
       - name: Update Elastic Beanstalk Environment
+        id: update_eb_env
+        if: steps.create_eb_version.outcome == 'success'
         run: |
           aws elasticbeanstalk update-environment \
             --environment-name auto-board-env \
