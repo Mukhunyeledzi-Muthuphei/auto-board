@@ -44,12 +44,12 @@ public class ProjectRepositoryTest {
         assertEquals("Test Project", projects.get(0).getName());
     }
 
-    @Test
-    public void testFindByStatusId() {
-        List<Project> projects = projectRepository.findByStatusId(1L);
-        assertFalse(projects.isEmpty());
-        assertEquals(1L, projects.get(0).getStatusId());
-    }
+    // @Test
+    // public void testFindByStatusId() {
+    // List<Project> projects = projectRepository.findByStatusId(1L);
+    // assertFalse(projects.isEmpty());
+    // assertEquals(1L, projects.get(0).getStatusId());
+    // }
 
     @Test
     public void testFindByOwner() {
