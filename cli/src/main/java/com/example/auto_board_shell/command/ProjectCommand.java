@@ -9,7 +9,6 @@ import com.example.auto_board_shell.service.RequestService;
 import com.example.auto_board_shell.service.FormatterService;
 import com.example.auto_board_shell.service.APIResponse;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,7 @@ public class ProjectCommand {
 
     // project-create --name "new pro" --status "2" --desc "from cli" --ownerId "google_user_101"
     @ShellMethod(key = "project-create", value = "Create a new project.")
-    public void createTask() {
+    public void createProject() {
         try {
             formatterService.printInfo("Creating new project...");
 
@@ -76,6 +75,59 @@ public class ProjectCommand {
         }
     }
 
+    @ShellMethod(key = "project-update", value = "Update a project.")
+    public void updateProject(
+            @ShellOption(value = "--id", help = "Project ID") String projectId
+    ) {
+        try {
+            formatterService.printInfo("Updating project...");
+
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/project-status", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+
+            List<Map<String, Object>> statuses = response.getData();
+
+            List<String> headers = new ArrayList<>(statuses.get(0).keySet());
+
+            List<List<String>> data = statuses.stream()
+                    .map(status -> headers.stream()
+                            .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
+                            .collect(Collectors.toList()))
+                    .collect(Collectors.toList());
+
+            formatterService.printTable(headers, data);
+
+            String name = formatterService.prompt("Enter project name: ");
+            String description = formatterService.prompt("Enter project description: ");
+            String statusId = formatterService.prompt("Enter status id: ");
+
+            Map<String, Object> status = new HashMap<>();
+            status.put("id", statusId);
+
+            Map<String, Object> project = new HashMap<>();
+            project.put("name", name);
+            project.put("description", description);
+            project.put("status", status);
+
+            APIResponse<Map<String, Object>> projectResponse = requestService.put(
+                    "/projects/" + projectId,
+                    project,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+
+            if (projectResponse.getData() == null) {
+                formatterService.printError("Failed to update project: " + projectResponse.getMessage());
+                return;
+            }
+
+            if (projectResponse.getStatusCode() == 200) {
+                formatterService.printSuccess("Update successful!");
+            }
+
+        } catch (Exception e) {
+            formatterService.printError("Error creating project: " + e.getMessage());
+        }
+    }
+
     @ShellMethod(key = "project-list", value = "List a user's projects")
     public void getUserProjects() {
         try {
@@ -90,7 +142,7 @@ public class ProjectCommand {
                 return;
             }
 
-            List<String> selectedHeaders = List.of("id", "name", "description", "owner_id");
+            List<String> selectedHeaders = List.of("id", "name", "description", "status", "owner_id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
@@ -98,9 +150,12 @@ public class ProjectCommand {
                     .map(row -> selectedHeaders.stream()
                             .map(key -> {
                                 if (key.equals("owner_id")) {
-                                    // Extract from nested 'user' field
                                     Map<String, Object> owner = (Map<String, Object>) row.get("owner");
                                     return owner != null ? String.valueOf(owner.getOrDefault("id", "N/A")) : "N/A";
+                                } else if (key.equals("status")) {
+                                    Map<String, Object> status = (Map<String, Object>) row.get("status");
+                                    return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
+
                                 } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }

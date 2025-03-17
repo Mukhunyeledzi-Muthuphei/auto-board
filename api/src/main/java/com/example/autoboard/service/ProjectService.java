@@ -44,6 +44,7 @@ public class ProjectService {
             }
             project.setName(projectDetails.getName());
             project.setDescription(projectDetails.getDescription());
+            project.setStatus(projectDetails.getStatus());
             // Update other fields as necessary
             return projectRepository.save(project);
         } else {
