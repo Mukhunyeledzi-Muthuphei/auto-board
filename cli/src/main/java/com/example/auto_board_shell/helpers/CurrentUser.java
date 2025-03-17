@@ -4,6 +4,12 @@ public class CurrentUser {
 
     private static String token;
     private static String userName;
+    private static String id;
+
+    public static void clear() {
+        token = null;
+        userName = null;
+    }
 
     public static String getToken() {
         return token;
@@ -19,5 +25,13 @@ public class CurrentUser {
 
     public static void setUserName(String userName) {
         CurrentUser.userName = userName;
+    }
+
+    public static String getId() {
+        return id;
+    }
+
+    public static void setId(String id) {
+        CurrentUser.id = id;
     }
 }
