@@ -5,9 +5,10 @@ on:
     paths-ignore:
       - "src/**"
       - "pom.xml"
-      - ".github/workflows/api-database.yml"
+      - ".github/workflows/api-deploy.yml"
       - "flyway/**"
       - "terraform/**"
+  workflow_dispatch:
 
 jobs:
   deploy:
