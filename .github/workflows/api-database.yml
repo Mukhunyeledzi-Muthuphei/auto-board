@@ -5,11 +5,11 @@ on:
     branches:
       - ndzalama/feat/deployment
     paths:
-        - 'src/**'
-        - 'pom.xml'
-        - '.github/workflows/api-database.yml'
-        - 'flyway/**'
-        - 'terraform/**'
+      - "src/**"
+      - "pom.xml"
+      - ".github/workflows/api-database.yml"
+      - "flyway/**"
+      - "terraform/**"
 
 jobs:
   deploy:
@@ -22,8 +22,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Build Application
         run: mvn clean package -DskipTests
@@ -45,9 +45,11 @@ jobs:
 
       - name: Create Elastic Beanstalk Application Version
         run: |
+          VERSION_LABEL="deploy-${{ github.run_number }}-$(date +%s)"
+          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
           aws elasticbeanstalk create-application-version \
             --application-name auto-board \
-            --version-label "deploy-${{ github.run_number }}-$(date +%s)" \
+            --version-label "$VERSION_LABEL" \
             --source-bundle S3Bucket=auto-board-bucket,S3Key=deploy.zip \
             --region af-south-1
 
@@ -55,5 +57,5 @@ jobs:
         run: |
           aws elasticbeanstalk update-environment \
             --environment-name auto-board-env \
-            --version-label "deploy-${{ github.run_number }}-$(date +%s)" \
+            --version-label "$VERSION_LABEL" \
             --region af-south-1
