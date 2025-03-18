@@ -59,4 +59,4 @@ jobs:
           application_name: auto-board
           environment_name: auto-board-env
           version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
-          deployment_package: autoboard-0.0.1-SNAPSHOT.jar
+          deployment_package: ./*.jar
