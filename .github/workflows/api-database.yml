@@ -27,7 +27,7 @@ jobs:
         run: ls -a api/target
 
       - name: Upload JAR
-      # We upload so we can re-use same jar in next job.
+        # We upload so we can re-use same jar in next job.
         uses: actions/upload-artifact@v4
         with:
           # Name of artifact can be anything
@@ -47,15 +47,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: artifact
-      
+
       - name: Check Downloaded artifact
         run: ls -a ./
-      # - uses: einaregilsson/beanstalk-deploy@v22
-      #   with:
-      #     aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-      #     aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-      #     region: ${{ secrets.AWS_REGION }}
-      #     application_name: auto-board
-      #     environment_name: auto-board-env
-      #     version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
-      #     deployment_package: api/target/autoboard-0.0.1-SNAPSHOT.jar
+
+      - uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+          region: ${{ secrets.AWS_REGION }}
+          application_name: auto-board
+          environment_name: auto-board-env
+          version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
+          deployment_package: autoboard-0.0.1-SNAPSHOT.jar
