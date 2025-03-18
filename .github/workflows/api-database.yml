@@ -53,6 +53,7 @@ jobs:
 
       - uses: einaregilsson/beanstalk-deploy@v22
         with:
+          existing_bucket_name: auto-board-bucket
           aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
           region: ${{ secrets.AWS_REGION }}
