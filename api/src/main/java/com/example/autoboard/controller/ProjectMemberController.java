@@ -72,25 +72,28 @@ public class ProjectMemberController {
             return null;
         }
         String userId = extractUserIdFromToken(token);
-        projectMember.setUser(new User(userId));
-        return projectMemberService.saveProjectMember(projectMember);
+        return projectMemberService.saveProjectMember(projectMember, userId);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectMember> updateProjectMember(@PathVariable Long id,
-            @RequestBody ProjectMember projectMember, @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
-        }
-        String userId = extractUserIdFromToken(token);
-        Optional<ProjectMember> existingProjectMember = projectMemberService.getProjectMemberById(id, userId);
-        if (existingProjectMember.isPresent()) {
-            projectMember.setId(id);
-            return ResponseEntity.ok(projectMemberService.saveProjectMember(projectMember));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // @PutMapping("/{id}")
+    // public ResponseEntity<ProjectMember> updateProjectMember(@PathVariable Long
+    // id,
+    // @RequestBody ProjectMember projectMember, @RequestHeader("Authorization")
+    // String token) {
+    // if (!TokenHelper.isValidIdToken(clientId, token)) {
+    // return ResponseEntity.notFound().build();
+    // }
+    // String userId = extractUserIdFromToken(token);
+    // Optional<ProjectMember> existingProjectMember =
+    // projectMemberService.getProjectMemberById(id, userId);
+    // if (existingProjectMember.isPresent()) {
+    // projectMember.setId(id);
+    // return
+    // ResponseEntity.ok(projectMemberService.saveProjectMember(projectMember));
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
+    // }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjectMember(@PathVariable Long id,

@@ -42,7 +42,15 @@ public class ProjectMemberService {
         return List.of();
     }
 
-    public ProjectMember saveProjectMember(ProjectMember projectMember) {
+    public ProjectMember createProjectMember(Project project, User user) {
+        ProjectMember projectMember = new ProjectMember(project, user);
+        return projectMemberRepository.save(projectMember);
+    }
+
+    public ProjectMember saveProjectMember(ProjectMember projectMember, String userId) {
+        if (!projectMember.getUser().getId().equals(userId)) {
+            return null;
+        }
         return projectMemberRepository.save(projectMember);
     }
 

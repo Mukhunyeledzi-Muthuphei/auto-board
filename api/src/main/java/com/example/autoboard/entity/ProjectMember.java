@@ -3,7 +3,9 @@ package com.example.autoboard.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "project_member")
+@Table(name = "project_member", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" })
+
+)
 public class ProjectMember {
 
     @Id
@@ -18,7 +20,7 @@ public class ProjectMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", nullable = true)
     private String role;
 
     public ProjectMember() {
@@ -28,6 +30,11 @@ public class ProjectMember {
         this.project = project;
         this.user = user;
         this.role = role;
+    }
+
+    public ProjectMember(Project project, User user) {
+        this.project = project;
+        this.user = user;
     }
 
     public Long getId() {

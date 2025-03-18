@@ -11,6 +11,8 @@ import com.example.autoboard.helpers.TokenHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
+import com.example.autoboard.service.ProjectMemberService;
+
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
@@ -20,6 +22,9 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private ProjectMemberService projectMemberService;
 
     @GetMapping
     public List<Project> getAllProjects() {
@@ -46,7 +51,9 @@ public class ProjectController {
         if (!project.getOwner().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+
         Project createdProject = projectService.createProject(project);
+        projectMemberService.createProjectMember(createdProject, createdProject.getOwner());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
