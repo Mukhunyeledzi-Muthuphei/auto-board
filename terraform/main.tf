@@ -178,7 +178,7 @@ resource "aws_s3_object" "beanstalk_zip" {
 resource "aws_elastic_beanstalk_application_version" "auto_board-version" {
   name        = "v1"
   application = aws_elastic_beanstalk_application.auto_board.name
-  bucket      = aws_s3_bucket.beanstalk_bucket.id
+  bucket      = aws_s3_bucket.beanstalk_bucket[0].id
   key         = aws_s3_object.beanstalk_zip.key
 }
 
