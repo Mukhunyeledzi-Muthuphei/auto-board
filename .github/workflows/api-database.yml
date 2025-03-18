@@ -1,8 +1,9 @@
 name: Deploy to Elastic Beanstalk
+
 on:
   push:
     branches: [ndzalama/feat/test-deployment]
-    paths-ignore:
+    paths:
       - "pom.xml"
       - ".github/workflows/api-database.yml"
       - "flyway/**"
