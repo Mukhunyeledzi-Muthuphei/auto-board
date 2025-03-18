@@ -11,6 +11,9 @@ import java.util.List;
 import com.example.autoboard.helpers.TokenHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import com.example.autoboard.entity.ProjectMember;
+import com.example.autoboard.entity.User;
+import com.example.autoboard.service.ProjectMemberService;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -21,8 +24,10 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+  
+    @Autowired
+    private ProjectMemberService projectMemberService;
 
-    // Get all projects that a user is associated with
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects(
             @RequestHeader("Authorization") String token
@@ -68,6 +73,12 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Project createdProject = projectService.createProject(project);
+
+        ProjectMember projectMember = new ProjectMember();
+        projectMember.setProject(createdProject);
+        projectMember.setUser(new User(userId));
+
+        projectMemberService.saveProjectMember(projectMember);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 

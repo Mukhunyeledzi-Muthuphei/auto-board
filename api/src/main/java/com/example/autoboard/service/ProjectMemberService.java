@@ -35,11 +35,11 @@ public class ProjectMemberService {
                 .toList();
     }
 
-    public List<ProjectMember> getProjectMembersByUser(User user, String userId) {
-        if (user.getId().equals(userId)) {
-            return projectMemberRepository.findByUser(user);
-        }
-        return List.of();
+    public List<ProjectMember> getProjectMemberByUser(User user, String userId) {
+        // if (user.getId().equals(userId)) {
+        return projectMemberRepository.findByUser(user);
+        // }
+        // return List.of();
     }
 
     public ProjectMember saveProjectMember(ProjectMember projectMember) {

@@ -18,6 +18,9 @@ public class ProjectMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "role", nullable = true)
+    private String role;
+
     public ProjectMember() {
     }
 
