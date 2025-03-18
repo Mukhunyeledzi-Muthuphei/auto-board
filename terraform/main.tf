@@ -159,7 +159,12 @@ resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
   role = aws_iam_role.beanstalk_role.name
 }
 
+data "aws_s3_bucket" "existing_bucket" {
+  bucket = "auto-board-bucket"
+}
+
 resource "aws_s3_bucket" "beanstalk_bucket" {
+  count  = length(data.aws_s3_bucket.existing_bucket) == 0 ? 1 : 0
   bucket = "auto-board-bucket"
 
 }
