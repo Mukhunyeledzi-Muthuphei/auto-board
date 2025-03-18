@@ -15,6 +15,7 @@ import com.example.autoboard.service.ActivityLogService;
 import com.example.autoboard.helpers.ActionType;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -103,6 +104,27 @@ public class TaskController {
         ActionType action = ActionType.DELETE_TASK;
         activityLogService.createLog(new Task(id), action.name());
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{taskId}/assign")
+    public ResponseEntity<Task> assignTask(
+            @PathVariable Long taskId,
+            @RequestBody Map<String, Object> requestBody,
+            @RequestHeader("Authorization") String token) {
+
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Extract the assignee ID from the request body
+        Map<String, Object> assigneeMap = (Map<String, Object>) requestBody.get("assignee");
+        String assigneeId = (String) assigneeMap.get("id");
+        Task assignedTask = taskService.assignTask(taskId, assigneeId);
+
+        if (assignedTask != null) {
+            return ResponseEntity.ok(assignedTask);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
 }
