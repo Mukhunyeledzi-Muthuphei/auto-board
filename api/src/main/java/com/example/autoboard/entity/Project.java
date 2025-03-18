@@ -21,7 +21,7 @@ public class Project {
     @JoinColumn(name = "status_id", referencedColumnName = "project_status_id", nullable = false)
     private ProjectStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id", nullable = false)
     private User owner;
 

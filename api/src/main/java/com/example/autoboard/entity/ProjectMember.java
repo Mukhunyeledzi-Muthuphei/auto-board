@@ -3,7 +3,10 @@ package com.example.autoboard.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "project_members")
+@Table(name = "project_members", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" })
+
+)
+
 public class ProjectMember {
 
     @Id
@@ -11,7 +14,7 @@ public class ProjectMember {
     private Long project_member_id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false, referencedColumnName = "project_id")
     private Project project;
 
     @ManyToOne

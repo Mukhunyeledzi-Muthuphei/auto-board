@@ -49,6 +49,14 @@
 1742234163811:project-create
 1742234280704:login
 1742234297878:project-delete --id 2
+1742303705916:login
+1742303875108:project-create
+1742304824637:wello
+1742304827821:project-create
+1742304956022:logout
+1742304958454:login
+1742304978639:project-create
+1742305230238:project-member-add --projectId 1 --userId 2
 1742292341632:login
 1742292364082:help
 1742293113994:logout
@@ -75,3 +83,4 @@
 1742299275693:activity-log-project --id 1
 1742299280296:activity-log-project --id 2
 1742299283894:activity-log-project --id 3
+

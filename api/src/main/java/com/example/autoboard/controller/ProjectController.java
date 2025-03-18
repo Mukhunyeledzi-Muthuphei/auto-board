@@ -15,6 +15,8 @@ import com.example.autoboard.entity.ProjectMember;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.service.ProjectMemberService;
 
+import com.example.autoboard.service.ProjectMemberService;
+
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
@@ -25,6 +27,9 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
   
+    @Autowired
+    private ProjectMemberService projectMemberService;
+
     @Autowired
     private ProjectMemberService projectMemberService;
 
@@ -72,13 +77,15 @@ public class ProjectController {
         if (!project.getOwner().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Project createdProject = projectService.createProject(project);
 
+        Project createdProject = projectService.createProject(project);
+      
         ProjectMember projectMember = new ProjectMember();
         projectMember.setProject(createdProject);
         projectMember.setUser(new User(userId));
 
         projectMemberService.saveProjectMember(projectMember);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
