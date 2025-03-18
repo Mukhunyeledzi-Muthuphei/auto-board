@@ -18,13 +18,10 @@ public class ProjectMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role", nullable = true)
-    private String role;
-
     public ProjectMember() {
     }
 
-    public ProjectMember(Project project, User user, String role) {
+    public ProjectMember(Project project, User user) {
         this.project = project;
         this.user = user;
     }
