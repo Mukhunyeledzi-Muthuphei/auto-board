@@ -3,6 +3,7 @@ package com.example.autoboard.service;
 import com.example.autoboard.entity.Task;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.TaskRepository;
+import com.example.autoboard.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,9 @@ public class TaskService {
 
     @Autowired
     private final TaskRepository taskRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     public TaskService(TaskRepository taskRepository) {
@@ -57,6 +61,19 @@ public class TaskService {
         taskRepository.deleteById(id);
         }
         
+    }
+
+    public Task assignTask(Long taskId, String assigneeId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task == null) {
+            return null; 
+        }
+        User assignee = userRepository.findById(assigneeId).orElse(null);
+        if (assignee == null) {
+            return null;
+        }
+        task.setAssignee(assignee);
+        return taskRepository.save(task);
     }
 
 }
