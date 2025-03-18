@@ -38,7 +38,7 @@ public class TaskController {
     public ResponseEntity<Task> getTaskById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
 
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         Task task = taskService.getTaskById(id, new User(userId));
@@ -49,7 +49,7 @@ public class TaskController {
     public ResponseEntity<List<Task>> getTasksByStatus(@PathVariable Long statusId, @RequestHeader("Authorization") String token) {
 
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         User assignee = new User();
@@ -74,7 +74,7 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         Task updateTask = taskService.updateTask(id, task, new User(userId));
@@ -88,7 +88,7 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         taskService.deleteTask(id, userId);

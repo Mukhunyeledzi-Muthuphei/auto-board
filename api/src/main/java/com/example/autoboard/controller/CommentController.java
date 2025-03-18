@@ -40,10 +40,9 @@ public class CommentController {
     @GetMapping("/{id}")
     public ResponseEntity<Comment> getCommentById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String userId = TokenHelper.extractUserIdFromToken(token);
-        Optional<Comment> comment = commentService.getCommentById(id,new User(userId));
+        Optional<Comment> comment = commentService.getCommentById(id);
         return comment.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -57,10 +56,10 @@ public class CommentController {
     @PutMapping("/{id}")
     public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment updatedComment, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
-        Optional<Comment> existingComment = commentService.getCommentById(id,new User(userId));
+        Optional<Comment> existingComment = commentService.getCommentById(id);
         if (existingComment.isPresent()) {
             updatedComment.setId(id);
             Comment savedComment = commentService.updateComment(updatedComment, new User(userId));
@@ -73,7 +72,7 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         commentService.deleteComment(id, new User(userId));

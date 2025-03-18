@@ -20,7 +20,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Optional<Comment> getCommentById(Long id, User user) {
+    public Optional<Comment> getCommentById(Long id) {
         return commentRepository.findById(id);
     }
 
