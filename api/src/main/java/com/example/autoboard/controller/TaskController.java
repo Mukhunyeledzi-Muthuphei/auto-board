@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import com.example.autoboard.service.ActivityLogService;
+import com.example.autoboard.helpers.ActionType;
 
 import java.util.List;
 
@@ -22,9 +24,11 @@ public class TaskController {
     private String clientId;
     
     private final TaskService taskService;
+    private final ActivityLogService activityLogService;
 
     @Autowired
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, ActivityLogService activityLogService) {
+        this.activityLogService = activityLogService;
         this.taskService = taskService;
     }
 
@@ -68,6 +72,8 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Task createTask = taskService.createTask(task, new User(userId));
+        ActionType action = ActionType.CREATE_TASK;
+        activityLogService.createLog(createTask, action.name());
         return ResponseEntity.status(HttpStatus.CREATED).body(createTask);
     }
 
@@ -79,7 +85,9 @@ public class TaskController {
         String userId = TokenHelper.extractUserIdFromToken(token);
         Task updateTask = taskService.updateTask(id, task, new User(userId));
         if (updateTask != null) {
-            return ResponseEntity.ok(updateTask);
+            ActionType action = ActionType.UPDATE_TASK;
+        activityLogService.createLog(updateTask, action.name());
+        return ResponseEntity.ok(updateTask);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -92,6 +100,8 @@ public class TaskController {
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         taskService.deleteTask(id, userId);
+        ActionType action = ActionType.DELETE_TASK;
+        activityLogService.createLog(new Task(id), action.name());
         return ResponseEntity.noContent().build();
     }
 

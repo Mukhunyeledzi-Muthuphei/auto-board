@@ -31,6 +31,10 @@ public class Task {
     public Task() {
     }
 
+    public Task(Long task_id) {
+        this.task_id = task_id;
+    }
+
     public Long getId() {
         return task_id;
     }

@@ -3,7 +3,7 @@ package com.example.autoboard.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "project_member")
+@Table(name = "project_members")
 public class ProjectMember {
 
     @Id
@@ -18,16 +18,12 @@ public class ProjectMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role", nullable = false)
-    private String role;
-
     public ProjectMember() {
     }
 
-    public ProjectMember(Project project, User user, String role) {
+    public ProjectMember(Project project, User user) {
         this.project = project;
         this.user = user;
-        this.role = role;
     }
 
     public Long getId() {
@@ -44,14 +40,6 @@ public class ProjectMember {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public Project getProject() {
