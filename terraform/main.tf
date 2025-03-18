@@ -170,6 +170,7 @@ resource "aws_s3_bucket" "beanstalk_bucket" {
 }
 
 resource "aws_s3_object" "beanstalk_zip" {
+  count  = aws_s3_bucket.beanstalk_bucket != [] ? 1 : 0
   bucket = aws_s3_bucket.beanstalk_bucket[0].id
   key    = "deploy.zip"
   source = "../deploy.zip" #local path to zip file
