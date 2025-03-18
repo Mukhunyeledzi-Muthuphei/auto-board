@@ -190,7 +190,7 @@ resource "aws_elastic_beanstalk_environment" "auto_board_env" {
   name                = "auto-board-env"
   application         = aws_elastic_beanstalk_application.auto_board.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.4.4 running Corretto 21"
-  version_label       = aws_elastic_beanstalk_application_version.auto_board-version.name
+  version_label       = aws_elastic_beanstalk_application_version.auto_board-version[0].name
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
