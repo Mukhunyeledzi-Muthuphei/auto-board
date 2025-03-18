@@ -24,16 +24,18 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Check
-        run: ls -a api/target 
+        run: ls -a api/target
 
-      - name: Download JAR
-      # Download the artifact which was uploaded in the Build Archive's job
-        uses: actions/download-artifact@v4
+      - name: Upload JAR
+      # We upload so we can re-use same jar in next job.
+        uses: actions/upload-artifact@v4
         with:
+          # Name of artifact can be anything
           name: artifact
-      # Deploy the artifact (JAR) into AWS Beanstalk
+          # Relative path to jar file
+          path: api/target/*.jar
 
-      # - uses: einaregilsson/beanstalk-deploy@v21
+      # - uses: einaregilsson/beanstalk-deploy@v22
       #   with:
       #     aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
       #     aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
