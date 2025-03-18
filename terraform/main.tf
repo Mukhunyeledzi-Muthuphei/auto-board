@@ -179,10 +179,11 @@ resource "aws_s3_object" "beanstalk_zip" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "auto_board-version" {
+  count  = aws_s3_bucket.beanstalk_bucket != [] ? 1 : 0
   name        = "v1"
   application = aws_elastic_beanstalk_application.auto_board.name
   bucket      = aws_s3_bucket.beanstalk_bucket[0].id
-  key         = aws_s3_object.beanstalk_zip.key
+  key         = aws_s3_object.beanstalk_zip[0].key
 }
 
 resource "aws_elastic_beanstalk_environment" "auto_board_env" {
