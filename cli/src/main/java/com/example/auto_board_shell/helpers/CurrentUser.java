@@ -9,6 +9,7 @@ public class CurrentUser {
     public static void clear() {
         token = null;
         userName = null;
+        id = null;
     }
 
     public static String getToken() {
