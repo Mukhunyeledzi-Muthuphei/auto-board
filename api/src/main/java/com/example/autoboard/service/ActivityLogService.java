@@ -85,7 +85,17 @@ public class ActivityLogService {
         activityLogRepository.save(log);
     }
 
-    public List<ActivityLog> getActivityLogsByProjectId(Long projectId) {
+    public List<ActivityLog> getActivityLogsByProjectId(Long projectId, String userId) {
+        // Check if the user is a member of the project
+        List<ProjectMember> userProjects = projectMemberService.getProjectMemberByUser(new User(userId), userId);
+        boolean isMember = userProjects.stream()
+                .anyMatch(member -> member.getProject().getId().equals(projectId));
+
+        if (!isMember) {
+            return List.of(); // Return an empty list if the user is not part of the project
+        }
+
+        // Fetch and return the activity logs for the project
         return activityLogRepository.findByProjectId(projectId);
     }
 }
