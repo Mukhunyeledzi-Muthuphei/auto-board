@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import com.example.autoboard.helpers.TokenHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,19 +22,39 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    // Get all projects that a user is associated with
     @GetMapping
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
+    public ResponseEntity<List<Project>> getAllProjects(
+            @RequestHeader("Authorization") String token
+    ) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        List<Project> projects = projectService.getAllProjectsByUserId(userId);
+
+        if (projects == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        Project project = projectService.getProjectById(id);
-        if (project != null) {
-            return ResponseEntity.ok(project);
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProjectById(
+            @PathVariable Long projectId,
+            @RequestHeader("Authorization") String token
+    ) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        String userId = TokenHelper.extractUserIdFromToken(token);
+
+        return projectService.getProjectByIdForUser(projectId, userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
     }
 
     @PostMapping
