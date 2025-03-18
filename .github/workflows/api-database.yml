@@ -1,9 +1,8 @@
 name: Deploy to Elastic Beanstalk
 on:
   push:
-    branches: [ndzalama/feat/deployment]
+    branches: [ndzalama/feat/test-deployment]
     paths-ignore:
-      - "src/**"
       - "pom.xml"
       - ".github/workflows/api-database.yml"
       - "flyway/**"
@@ -23,12 +22,15 @@ jobs:
         working-directory: ./api
         run: mvn clean package -DskipTests
 
-      - uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          region: ${{ secrets.AWS_REGION }}
-          application_name: auto-board
-          environment_name: auto-board-env
-          version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
-          deployment_package: api/target/autoboard-0.0.1-SNAPSHOT.jar
+      - name: Check
+        run: ls -a api/target 
+
+      # - uses: einaregilsson/beanstalk-deploy@v21
+      #   with:
+      #     aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+      #     aws_secret_key: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+      #     region: ${{ secrets.AWS_REGION }}
+      #     application_name: auto-board
+      #     environment_name: auto-board-env
+      #     version_label: "auto-board-${{ github.sha }}-${{ github.run_id }}"
+      #     deployment_package: api/target/autoboard-0.0.1-SNAPSHOT.jar
