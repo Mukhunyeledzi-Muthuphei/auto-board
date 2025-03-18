@@ -26,17 +26,13 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-  
-    @Autowired
-    private ProjectMemberService projectMemberService;
 
     @Autowired
     private ProjectMemberService projectMemberService;
 
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects(
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -54,8 +50,7 @@ public class ProjectController {
     @GetMapping("/{projectId}")
     public ResponseEntity<Project> getProjectById(
             @PathVariable Long projectId,
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -79,12 +74,12 @@ public class ProjectController {
         }
 
         Project createdProject = projectService.createProject(project);
-      
+
         ProjectMember projectMember = new ProjectMember();
         projectMember.setProject(createdProject);
         projectMember.setUser(new User(userId));
 
-        projectMemberService.saveProjectMember(projectMember);
+        projectMemberService.saveProjectMember(projectMember, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
