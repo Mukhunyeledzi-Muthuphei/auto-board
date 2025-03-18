@@ -63,7 +63,7 @@ resource "aws_iam_role" "beanstalk_role" {
 
 // Database instance creation
 resource "aws_db_instance" "auto-board-db" {
-  identifier           = "auto-board-db-instance"
+  identifier = "auto-board-db-instance"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
@@ -159,38 +159,15 @@ resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
   role = aws_iam_role.beanstalk_role.name
 }
 
-data "aws_s3_bucket" "existing_bucket" {
-  bucket = "auto-board-bucket"
-}
-
 resource "aws_s3_bucket" "beanstalk_bucket" {
-  count  = length(data.aws_s3_bucket.existing_bucket) == 0 ? 1 : 0
   bucket = "auto-board-bucket"
 
-}
-
-resource "aws_s3_object" "beanstalk_zip" {
-  count  = aws_s3_bucket.beanstalk_bucket != [] ? 1 : 0
-  bucket = aws_s3_bucket.beanstalk_bucket[0].id
-  key    = "deploy.zip"
-  source = "../deploy.zip" #local path to zip file
-  depends_on = [aws_s3_bucket.beanstalk_bucket]
-
-}
-
-resource "aws_elastic_beanstalk_application_version" "auto_board-version" {
-  count  = aws_s3_bucket.beanstalk_bucket != [] ? 1 : 0
-  name        = "v1"
-  application = aws_elastic_beanstalk_application.auto_board.name
-  bucket      = aws_s3_bucket.beanstalk_bucket[0].id
-  key         = aws_s3_object.beanstalk_zip[0].key
 }
 
 resource "aws_elastic_beanstalk_environment" "auto_board_env" {
   name                = "auto-board-env"
   application         = aws_elastic_beanstalk_application.auto_board.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.4.4 running Corretto 21"
-  version_label       = aws_elastic_beanstalk_application_version.auto_board-version[0].name
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
@@ -258,31 +235,31 @@ resource "aws_elastic_beanstalk_environment" "auto_board_env" {
     value     = "true"
   }
 
-   # Pass database endpoint and credentials as environment variables:
- setting {
-   namespace         ="aws:elasticbeanstalk:application:environment"
-   name              ="DB_HOST_URL"
-   value             = "${aws_db_instance.auto-board-db.address}"
- }
+  # Pass database endpoint and credentials as environment variables:
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_HOST_URL"
+    value             = "jdbc:postgresql://${aws_db_instance.auto-board-db.address}:5432/${aws_db_instance.auto-board-db.db_name}"
+  }
 
- setting {
-   namespace         ="aws:elasticbeanstalk:application:environment"
-   name              ="DB_NAME"
-   value             ="${aws_db_instance.auto-board-db.db_name}"
- }
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_NAME"
+    value             ="${aws_db_instance.auto-board-db.db_name}"
+  }
 
- setting {
-   namespace         ="aws:elasticbeanstalk:application:environment"
-   name              ="DB_USERNAME"
-   value             ="${aws_db_instance.auto-board-db.username}"
- }
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_USERNAME"
+    value             ="${aws_db_instance.auto-board-db.username}"
+  }
 
- setting {
-   namespace         ="aws:elasticbeanstalk:application:environment"
-   name              ="DB_PASSWORD"
-   value             ="${var.db_password}"
- }
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_PASSWORD"
+    value             ="${var.db_password}"
+  }
 
- depends_on          =[aws_db_instance.auto-board-db]
+  depends_on          =[aws_db_instance.auto-board-db]
 
 }
