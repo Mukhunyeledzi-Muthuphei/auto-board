@@ -85,8 +85,7 @@ resource "aws_db_instance" "auto-board-db" {
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds-subnet-group"
-  # subnet_ids = [subnet-0f04cbd4675ce09aa, aws_subnet.subnet_b.id]
-  subnet_ids = ["subnet-0f04cbd4675ce09aa", "subnet-07964a00e92087b7f"]
+  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 }
 
 resource "aws_security_group" "rds_sg" {
@@ -162,6 +161,7 @@ resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
 
 resource "aws_s3_bucket" "beanstalk_bucket" {
   bucket = "auto-board-bucket"
+
   lifecycle {
     ignore_changes = [
       bucket
