@@ -18,6 +18,14 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
+    public List<Project> getAllProjectsByUserId(String id) {
+        return projectRepository.findAllProjectsByUser(id);
+    }
+
+    public Optional<Project> getProjectByIdForUser(Long projectId, String userId) {
+        return projectRepository.findProjectByIdAndUser(projectId, userId);
+    }
+
     public Project getProjectById(Long id) {
         Optional<Project> project = projectRepository.findById(id);
         return project.orElse(null);
@@ -36,6 +44,7 @@ public class ProjectService {
             }
             project.setName(projectDetails.getName());
             project.setDescription(projectDetails.getDescription());
+            project.setStatus(projectDetails.getStatus());
             // Update other fields as necessary
             return projectRepository.save(project);
         } else {

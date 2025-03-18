@@ -3,9 +3,10 @@ package com.example.autoboard.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "project_member", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" })
+@Table(name = "project_members", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" })
 
 )
+
 public class ProjectMember {
 
     @Id

@@ -8,6 +8,7 @@ import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.ActivityLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.autoboard.repository.TaskRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,15 +20,18 @@ public class ActivityLogService {
 
     private final ActivityLogRepository activityLogRepository;
     private final ProjectMemberService projectMemberService;
+    private final TaskRepository taskRepository;
 
     @Autowired
-    public ActivityLogService(ActivityLogRepository activityLogRepository, ProjectMemberService projectMemberService) {
+    public ActivityLogService(ActivityLogRepository activityLogRepository, ProjectMemberService projectMemberService,
+            TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
         this.activityLogRepository = activityLogRepository;
         this.projectMemberService = projectMemberService;
     }
 
     public List<ActivityLog> getAllLogs(String userId) {
-        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
+        List<ProjectMember> userProjects = projectMemberService.getProjectMemberByUser(new User(userId), userId);
         return activityLogRepository.findAll().stream()
                 .filter(log -> userProjects.stream()
                         .anyMatch(member -> member.getProject().getId().equals(log.getTask().getProject().getId())))
@@ -38,7 +42,7 @@ public class ActivityLogService {
         Optional<ActivityLog> log = activityLogRepository.findById(id);
         if (log.isPresent()) {
             Project project = log.get().getTask().getProject();
-            List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
+            List<ProjectMember> userProjects = projectMemberService.getProjectMemberByUser(new User(userId), userId);
             boolean isMember = userProjects.stream()
                     .anyMatch(member -> member.getProject().getId().equals(project.getId()));
             if (isMember) {
@@ -49,11 +53,28 @@ public class ActivityLogService {
     }
 
     public List<ActivityLog> getLogsByTaskId(Long taskId, String userId) {
-        List<ProjectMember> userProjects = projectMemberService.getProjectMembersByUser(new User(userId), userId);
-        return activityLogRepository.findByTaskId(taskId).stream()
-                .filter(log -> userProjects.stream()
-                        .anyMatch(member -> member.getProject().getId().equals(log.getTask().getProject().getId())))
-                .collect(Collectors.toList());
+        // Get the task's project
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            return List.of(); // Return an empty list if the task does not exist
+        }
+
+        Task task = taskOptional.get();
+        Project project = task.getProject();
+
+        // Check if the user is a member of the project
+        List<ProjectMember> userProjects = projectMemberService.getProjectMemberByUser(new User(userId), userId);
+        boolean isMember = userProjects.stream()
+                .anyMatch(member -> member.getProject().getId().equals(project.getId()));
+
+        System.out.println("isMember: " + isMember);
+        if (!isMember) {
+            System.out.println("User is not a member of the project");
+            return List.of(); // Return an empty list if the user is not part of the project
+        }
+
+        // Fetch and return the activity logs for the task
+        return activityLogRepository.findByTask(new Task(taskId));
     }
 
     public void createLog(Task task, String action) {
@@ -64,7 +85,17 @@ public class ActivityLogService {
         activityLogRepository.save(log);
     }
 
-    public List<ActivityLog> getActivityLogsByProjectId(Long projectId) {
+    public List<ActivityLog> getActivityLogsByProjectId(Long projectId, String userId) {
+        // Check if the user is a member of the project
+        List<ProjectMember> userProjects = projectMemberService.getProjectMemberByUser(new User(userId), userId);
+        boolean isMember = userProjects.stream()
+                .anyMatch(member -> member.getProject().getId().equals(projectId));
+
+        if (!isMember) {
+            return List.of(); // Return an empty list if the user is not part of the project
+        }
+
+        // Fetch and return the activity logs for the project
         return activityLogRepository.findByProjectId(projectId);
     }
 }

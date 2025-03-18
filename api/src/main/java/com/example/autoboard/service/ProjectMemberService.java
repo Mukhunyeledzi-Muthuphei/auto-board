@@ -47,12 +47,12 @@ public class ProjectMemberService {
         return projectMemberRepository.findByProject(project);
     }
 
-    public List<ProjectMember> getProjectMembersByUser(User user, String userId) {
-        // Ensure the userId matches the user being queried
-        if (user.getId().equals(userId)) {
-            return projectMemberRepository.findByUser(user);
-        }
-        return List.of();
+
+    public List<ProjectMember> getProjectMemberByUser(User user, String userId) {
+        // if (user.getId().equals(userId)) {
+        return projectMemberRepository.findByUser(user);
+        // }
+        // return List.of();
     }
 
     public ProjectMember createProjectMember(Project project, User user) {

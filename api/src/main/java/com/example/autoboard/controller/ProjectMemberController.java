@@ -62,7 +62,7 @@ public class ProjectMemberController {
         }
         User user = new User();
         user.setId(userId);
-        return projectMemberService.getProjectMembersByUser(user, userId);
+        return projectMemberService.getProjectMemberByUser(user, userId);
     }
 
     @PostMapping

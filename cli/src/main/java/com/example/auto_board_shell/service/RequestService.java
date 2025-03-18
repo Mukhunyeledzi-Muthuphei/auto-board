@@ -69,7 +69,7 @@ public class RequestService {
         }
     }
 
-    public <T, R> APIResponse<T> put(String endpoint, R request, Class<T> responseType) {
+    public <T, R> APIResponse<T> put(String endpoint, R request, ParameterizedTypeReference<T> responseType) {
         try {
             HttpEntity<R> entity = new HttpEntity<>(request, createHeaders());
             ResponseEntity<T> response = restTemplate.exchange(buildUrl(endpoint), HttpMethod.PUT,
