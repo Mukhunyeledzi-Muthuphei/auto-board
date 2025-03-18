@@ -30,7 +30,7 @@ public class ProjectMemberController {
     @GetMapping("/{id}")
     public ResponseEntity<ProjectMember> getProjectMemberById(@PathVariable Long id,
             @RequestHeader("Authorization") String token) {
-        String userId = extractUserIdFromToken(token);
+        String userId = TokenHelper.extractUserIdFromToken(token);
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.notFound().build();
         }
@@ -44,7 +44,7 @@ public class ProjectMemberController {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return List.of();
         }
-        String userId = extractUserIdFromToken(token);
+        String userId = TokenHelper.extractUserIdFromToken(token);
         Project project = new Project();
         project.setId(projectId);
         return projectMemberService.getProjectMembersByProject(project, userId);
@@ -56,7 +56,7 @@ public class ProjectMemberController {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return List.of();
         }
-        String userIdFromToken = extractUserIdFromToken(token);
+        String userIdFromToken = TokenHelper.extractUserIdFromToken(token);
         if (!userId.equals(userIdFromToken)) {
             return List.of(); // Return an empty list if the user ID does not match the token
         }
@@ -71,48 +71,18 @@ public class ProjectMemberController {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return null;
         }
-        String userId = extractUserIdFromToken(token);
+        String userId = TokenHelper.extractUserIdFromToken(token);
         return projectMemberService.saveProjectMember(projectMember, userId);
     }
 
-    // @PutMapping("/{id}")
-    // public ResponseEntity<ProjectMember> updateProjectMember(@PathVariable Long
-    // id,
-    // @RequestBody ProjectMember projectMember, @RequestHeader("Authorization")
-    // String token) {
-    // if (!TokenHelper.isValidIdToken(clientId, token)) {
-    // return ResponseEntity.notFound().build();
-    // }
-    // String userId = extractUserIdFromToken(token);
-    // Optional<ProjectMember> existingProjectMember =
-    // projectMemberService.getProjectMemberById(id, userId);
-    // if (existingProjectMember.isPresent()) {
-    // projectMember.setId(id);
-    // return
-    // ResponseEntity.ok(projectMemberService.saveProjectMember(projectMember));
-    // } else {
-    // return ResponseEntity.notFound().build();
-    // }
-    // }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProjectMember(@PathVariable Long id,
+    @DeleteMapping
+    public ResponseEntity<Void> deleteProjectMember(@RequestBody ProjectMember projectMember,
             @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.notFound().build();
         }
-        String userId = extractUserIdFromToken(token);
-        if (projectMemberService.getProjectMemberById(id, userId).isPresent()) {
-            projectMemberService.deleteProjectMember(id, userId);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    private String extractUserIdFromToken(String token) {
-        // Implement the logic to extract the user ID from the Google JWT token
-        // This is a placeholder implementation
-        return token.substring(7); // Assuming the token is in the format "Bearer <token>"
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        projectMemberService.deleteProjectMember(projectMember, userId);
+        return ResponseEntity.noContent().build();
     }
 }

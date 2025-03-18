@@ -103,4 +103,27 @@ public class RequestService {
                     "An unexpected error occurred: " + e.getMessage(), null);
         }
     }
+
+    public <R> APIResponse<Void> delete(String endpoint, R request) {
+        try {
+            // Create an HttpEntity with the request body and headers
+            HttpEntity<R> entity = new HttpEntity<>(request, createHeaders());
+
+            // Perform the DELETE request
+            restTemplate.exchange(buildUrl(endpoint), HttpMethod.DELETE, entity, Void.class);
+
+            // Return a success response
+            return new APIResponse<>(HttpStatus.NO_CONTENT.value(), "Deleted successfully");
+        } catch (HttpClientErrorException e) {
+            // Handle client errors (e.g., 404 Not Found)
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return new APIResponse<>(HttpStatus.NOT_FOUND.value(), "Resource not found", null);
+            }
+            return new APIResponse<>(e.getStatusCode().value(), "Client Error: " + e.getMessage(), null);
+        } catch (Exception e) {
+            // Handle unexpected errors
+            return new APIResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "An unexpected error occurred: " + e.getMessage(), null);
+        }
+    }
 }

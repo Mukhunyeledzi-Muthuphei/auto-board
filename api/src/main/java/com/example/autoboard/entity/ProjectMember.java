@@ -13,23 +13,14 @@ public class ProjectMember {
     private Long project_member_id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false, referencedColumnName = "project_id")
     private Project project;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "role", nullable = true)
-    private String role;
-
     public ProjectMember() {
-    }
-
-    public ProjectMember(Project project, User user, String role) {
-        this.project = project;
-        this.user = user;
-        this.role = role;
     }
 
     public ProjectMember(Project project, User user) {
@@ -51,14 +42,6 @@ public class ProjectMember {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public Project getProject() {

@@ -4,6 +4,7 @@ import com.example.autoboard.entity.ProjectMember;
 import com.example.autoboard.entity.Project;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.ProjectMemberRepository;
+import com.example.autoboard.repository.ProjectRepository; // Add this import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,28 +15,40 @@ import java.util.Optional;
 public class ProjectMemberService {
 
     private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectRepository projectRepository; // Add ProjectRepository
 
     @Autowired
-    public ProjectMemberService(ProjectMemberRepository projectMemberRepository) {
+    public ProjectMemberService(ProjectMemberRepository projectMemberRepository, ProjectRepository projectRepository) {
         this.projectMemberRepository = projectMemberRepository;
+        this.projectRepository = projectRepository; // Initialize ProjectRepository
     }
 
     public Optional<ProjectMember> getProjectMemberById(Long id, String userId) {
         Optional<ProjectMember> projectMember = projectMemberRepository.findById(id);
-        if (projectMember.isPresent() && projectMember.get().getUser().getId().equals(userId)) {
-            return projectMember;
+        if (projectMember.isPresent()) {
+            ProjectMember pm = projectMember.get();
+            // Fetch the project and validate the owner
+            Optional<Project> projectOptional = projectRepository.findById(pm.getProject().getId());
+            if (projectOptional.isPresent() && projectOptional.get().getOwner().getId().equals(userId)) {
+                return projectMember;
+            }
         }
         return Optional.empty();
     }
 
     public List<ProjectMember> getProjectMembersByProject(Project project, String userId) {
-        List<ProjectMember> projectMembers = projectMemberRepository.findByProject(project);
-        return projectMembers.stream()
-                .filter(pm -> pm.getUser().getId().equals(userId))
-                .toList();
+        // Fetch the project and validate the owner
+        Optional<Project> projectOptional = projectRepository.findById(project.getId());
+        if (projectOptional.isEmpty() || !projectOptional.get().getOwner().getId().equals(userId)) {
+            System.out.println("User ID does not match project owner: " + userId);
+            return List.of();
+        }
+
+        return projectMemberRepository.findByProject(project);
     }
 
     public List<ProjectMember> getProjectMembersByUser(User user, String userId) {
+        // Ensure the userId matches the user being queried
         if (user.getId().equals(userId)) {
             return projectMemberRepository.findByUser(user);
         }
@@ -48,20 +61,52 @@ public class ProjectMemberService {
     }
 
     public ProjectMember saveProjectMember(ProjectMember projectMember, String userId) {
-        if (!projectMember.getUser().getId().equals(userId)) {
+        System.out.println("project id: " + projectMember.getProject().getId());
+
+        // Fetch the project and its owner using ProjectRepository
+        Optional<Project> projectOptional = projectRepository.findById(projectMember.getProject().getId());
+        if (projectOptional.isEmpty()) {
+            System.out.println("Project not found for ID: " + projectMember.getProject().getId());
             return null;
         }
+
+        Project project = projectOptional.get();
+        if (!project.getOwner().getId().equals(userId)) {
+            System.out.println("User ID does not match: " + projectMember.getUser().getId() + " != " + userId);
+            return null;
+        }
+
         return projectMemberRepository.save(projectMember);
     }
 
-    public void deleteProjectMember(Long id, String userId) {
-        Optional<ProjectMember> projectMemberOptional = projectMemberRepository.findById(id);
-        if (projectMemberOptional.isPresent()) {
-            ProjectMember projectMember = projectMemberOptional.get();
-            Project project = projectMember.getProject();
-            if (projectMember.getUser().getId().equals(userId) || project.getOwner().getId().equals(userId)) {
-                projectMemberRepository.deleteById(id);
-            }
+    public void deleteProjectMember(ProjectMember projectMember, String userId) {
+        // Fetch the project from the ProjectMember
+        Project project = projectMember.getProject();
+
+        // Validate that the userId is the owner of the project
+        Optional<Project> projectOptional = projectRepository.findById(project.getId());
+        if (projectOptional.isEmpty()) {
+            System.out.println("Project not found for ID: " + project.getId());
+            return;
         }
+
+        Project fetchedProject = projectOptional.get();
+        if (!fetchedProject.getOwner().getId().equals(userId)) {
+            System.out.println("User ID does not match project owner: " + userId);
+            return;
+        }
+
+        // Fetch the ProjectMember using the project and user fields
+        Optional<ProjectMember> projectMemberOptional = projectMemberRepository.findByProjectAndUser(
+                projectMember.getProject(), projectMember.getUser());
+
+        if (projectMemberOptional.isEmpty()) {
+            System.out.println("Project member not found for the specified project and user.");
+            return;
+        }
+
+        // Delete the ProjectMember
+        projectMemberRepository.delete(projectMemberOptional.get());
+        System.out.println("Project member deleted successfully.");
     }
 }
