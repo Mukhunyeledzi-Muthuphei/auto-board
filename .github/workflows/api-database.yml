@@ -47,6 +47,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: artifact
+      
+      - name: Check Downloaded artifact
+        run: ls -a ./
       # - uses: einaregilsson/beanstalk-deploy@v22
       #   with:
       #     aws_access_key: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
