@@ -5,6 +5,8 @@ import com.example.autoboard.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.autoboard.service.ActivityLogService;
+import com.example.autoboard.helpers.ActionType;
 
 import java.util.List;
 
@@ -13,9 +15,11 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final ActivityLogService activityLogService;
 
     @Autowired
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, ActivityLogService activityLogService) {
+        this.activityLogService = activityLogService;
         this.taskService = taskService;
     }
 
@@ -39,18 +43,24 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         Task createTask = taskService.createTask(task);
+        ActionType action = ActionType.CREATE_TASK;
+        activityLogService.createLog(createTask, action.name());
         return ResponseEntity.ok(createTask);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         Task updateTask = taskService.updateTask(id, task);
+        ActionType action = ActionType.UPDATE_TASK;
+        activityLogService.createLog(updateTask, action.name());
         return ResponseEntity.ok(updateTask);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
+        ActionType action = ActionType.DELETE_TASK;
+        activityLogService.createLog(new Task(id), action.name());
         return ResponseEntity.noContent().build();
     }
 
