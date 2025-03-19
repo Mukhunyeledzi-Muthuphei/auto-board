@@ -36,13 +36,18 @@ public class ActivityLogCommand {
 
             APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/project/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
-            List<Map<String, Object>> taskActivityLog = response.getData();
+            List<Map<String, Object>> projectActivityLog = response.getData();
+
+            if (projectActivityLog == null || projectActivityLog.isEmpty()) {
+                formatterService.printWarning("No task activity log found");
+                return;
+            }
 
             List<String> selectedHeaders = List.of("task_id", "title", "action", "timestamp", "id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
-            List<List<String>> data = taskActivityLog.stream()
+            List<List<String>> data = projectActivityLog.stream()
                     .map(row -> selectedHeaders.stream()
                             .map(key -> {
                                 if (key.equals("task_id") || key.equals("title")) {
@@ -74,6 +79,11 @@ public class ActivityLogCommand {
             APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/task/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
             List<Map<String, Object>> taskActivityLog = response.getData();
+
+            if (taskActivityLog == null || taskActivityLog.isEmpty()) {
+                formatterService.printWarning("No task activity log found");
+                return;
+            }
 
             List<String> selectedHeaders = List.of("task_id", "title", "action", "timestamp", "id");
 
