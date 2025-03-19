@@ -39,4 +39,12 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "WHERE t.task_id = :taskId " +
             "AND (p.owner_id = :userId OR pm.user_id = :userId)", nativeQuery = true)
     Optional<Task> findTaskByIdAndUserAccess(@Param("taskId") Long taskId, @Param("userId") String userId);
+
+    @Query(value = "SELECT DISTINCT t.* " +
+            "FROM tasks t " +
+            "JOIN projects p ON t.project_id = p.project_id " +
+            "LEFT JOIN project_members pm ON t.project_id = pm.project_id " +
+            "WHERE t.project_id = :projectId " +
+            "AND (p.owner_id = :userId OR pm.user_id = :userId)", nativeQuery = true)
+    List<Task> findAllTasksByProjectIdAndUserAccess(@Param("projectId") Long projectId, @Param("userId") String userId);
 }
