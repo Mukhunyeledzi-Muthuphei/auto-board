@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "WHERE t.assignee.user_id = :userId")
     List<Task> findTasksByAssigneeId(@Param("userId") String userId);
 
-    @Query(value = "SELECT t.* " +
+    @Query(value = "SELECT DISTINCT t.* " +
             "FROM tasks t " +
             "JOIN projects p ON t.project_id = p.project_id " +
             "LEFT JOIN project_members pm ON t.project_id = pm.project_id " +
