@@ -25,7 +25,7 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
             "AND (p.owner.id = :userId OR pm.user.id = :userId)")
     List<ActivityLog> findByTask(@Param("taskId") Long taskId, @Param("userId") String userId);
 
-    @Query(value = "SELECT al.* " +
+    @Query(value = "SELECT DISTINCT al.* " +
             "FROM activity_logs al " +
             "JOIN tasks t ON al.task_id = t.task_id " +
             "JOIN projects p ON t.project_id = p.project_id " +
