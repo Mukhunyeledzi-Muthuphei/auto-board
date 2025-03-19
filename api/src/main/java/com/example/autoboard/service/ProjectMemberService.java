@@ -40,8 +40,7 @@ public class ProjectMemberService {
         // Fetch the project and validate the owner
         Optional<Project> projectOptional = projectRepository.findById(project.getId());
         if (projectOptional.isEmpty() || !projectOptional.get().getOwner().getId().equals(userId)) {
-            System.out.println("User ID does not match project owner: " + userId);
-            return List.of();
+            throw new RuntimeException("User ID does not match project owner: " + userId);
         }
 
         return projectMemberRepository.findByProject(project);
@@ -60,14 +59,12 @@ public class ProjectMemberService {
         // Fetch the project and its owner using ProjectRepository
         Optional<Project> projectOptional = projectRepository.findById(projectMember.getProject().getId());
         if (projectOptional.isEmpty()) {
-            System.out.println("Project not found for ID: " + projectMember.getProject().getId());
-            return null;
+            throw new RuntimeException("Project not found for ID: " + projectMember.getProject().getId());
         }
 
         Project project = projectOptional.get();
         if (!project.getOwner().getId().equals(userId)) {
-            System.out.println("User ID does not match: " + projectMember.getUser().getId() + " != " + userId);
-            return null;
+            throw new RuntimeException("User ID does not match: " + projectMember.getUser().getId() + " != " + userId);
         }
 
         return projectMemberRepository.save(projectMember);
@@ -80,14 +77,12 @@ public class ProjectMemberService {
         // Validate that the userId is the owner of the project
         Optional<Project> projectOptional = projectRepository.findById(project.getId());
         if (projectOptional.isEmpty()) {
-            System.out.println("Project not found for ID: " + project.getId());
-            return;
+            throw new RuntimeException("Project not found for ID: " + project.getId());
         }
 
         Project fetchedProject = projectOptional.get();
         if (!fetchedProject.getOwner().getId().equals(userId)) {
-            System.out.println("User ID does not match project owner: " + userId);
-            return;
+            throw new RuntimeException("User ID does not match project owner: " + userId);
         }
 
         // Fetch the ProjectMember using the project and user fields
@@ -95,12 +90,11 @@ public class ProjectMemberService {
                 projectMember.getProject(), projectMember.getUser());
 
         if (projectMemberOptional.isEmpty()) {
-            System.out.println("Project member not found for the specified project and user.");
-            return;
+            throw new RuntimeException("Project member not found for the specified project and user.");
         }
 
         // Delete the ProjectMember
         projectMemberRepository.delete(projectMemberOptional.get());
-        System.out.println("Project member deleted successfully.");
+        throw new RuntimeException("Project member deleted successfully.");
     }
 }
