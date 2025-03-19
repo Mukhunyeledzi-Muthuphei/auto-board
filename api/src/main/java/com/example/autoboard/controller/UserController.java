@@ -36,34 +36,4 @@ public class UserController {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser); // Return 201 Created with the created user
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User userDetails) {
-        try {
-            User updatedUser = userService.updateUser(id, userDetails);
-            return ResponseEntity.ok(updatedUser); // Return 200 OK with the updated user
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 Not Found if the user does not
-                                                                        // exist
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id, @RequestHeader("Authorization") String token) {
-        if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Return 403 Forbidden if the token is invalid
-        }
-        if (!TokenHelper.parseIdToken(token).get("sub").equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Return 403 Forbidden if the token does not
-                                                                        // match the user ID
-        }
-        userService.deleteUser(id);
-        return ResponseEntity.ok().build(); // Return 200 OK after successful deletion
-    }
 }
