@@ -16,6 +16,9 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "auto-board-github-actions"
   CONFIG_DIRECTORY: "./terraform"
+  DB_USERNAME: "${{ secrets.DB_USERNAME }}"
+  DB_PASSWORD: "${{ secrets.DB_PASSWORD }}"
+  GOOGLE_SECRET: "${{ secrets.GOOGLE_CLIENT_SECRET }}"
 
 permissions:
   id-token: write
