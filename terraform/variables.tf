@@ -1,14 +1,14 @@
 variable "db_username" {
   description = "RDS master username"
   type        = string
-  default     = try(env("DB_USERNAME"), "")
+  default     = "postgres"
 }
 
 variable "db_password" {
   description = "RDS master password"
   type        = string
   sensitive   = true
-  default     = try(env("DB_PASSWORD"), "")
+  default     = "Password123"
 }
 
 variable "region" {
@@ -21,6 +21,6 @@ variable "google_client_secret" {
   description = "Google Client Secret"
   type        = string
   sensitive   = true
-  default     = try(env("GOOGLE_SECRET"), "")
+  default     = "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"
 }
 
