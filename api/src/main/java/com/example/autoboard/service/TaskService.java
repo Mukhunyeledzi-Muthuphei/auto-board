@@ -31,10 +31,10 @@ public class TaskService {
     @Autowired TaskStatusRepository taskStatusRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
-
     public List<Task> getAlltasks() {
         return taskRepository.findAll();
     }
@@ -66,9 +66,7 @@ public class TaskService {
             tasks.setProject(task.getProject());
         }
 
-        Task savedTask = taskRepository.save(tasks);
-
-        return taskRepository.save(savedTask);
+        return taskRepository.save(tasks);
     } else {
         return null;
     }
