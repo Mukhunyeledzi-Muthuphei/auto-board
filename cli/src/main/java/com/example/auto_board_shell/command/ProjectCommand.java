@@ -278,7 +278,7 @@ public class ProjectCommand {
             @ShellOption(value = "--id", help = "Project ID") String projectId) {
         try {
             requestService.delete("/projects/" + projectId);
-            formatterService.printSuccess("Project deleted successfully!");
+            formatterService.printSuccess("Attempting to delete project!");
         } catch (Exception e) {
             System.err.println("Error fetching projects: " + e.getMessage());
         }
