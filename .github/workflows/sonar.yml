@@ -52,8 +52,9 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn clean install -DskipTests
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=auto-board_auto-board \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.inclusions="src/**/*.java" \
+            -Dsonar.exclusions="**/test/**" \
             -DskipTests
