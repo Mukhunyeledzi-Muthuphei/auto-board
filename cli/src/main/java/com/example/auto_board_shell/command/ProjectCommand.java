@@ -29,7 +29,8 @@ public class ProjectCommand {
         this.formatterService = formatterService;
     }
 
-    // project-create --name "new pro" --status "2" --desc "from cli" --ownerId "google_user_101"
+    // project-create --name "new pro" --status "2" --desc "from cli" --ownerId
+    // "google_user_101"
     @ShellMethod(key = "project-create", value = "Create a new project.")
     public void createProject() {
         try {
@@ -53,8 +54,8 @@ public class ProjectCommand {
             APIResponse<Map<String, Object>> response = requestService.post(
                     "/projects",
                     project,
-                    new ParameterizedTypeReference<Map<String, Object>>() {}
-            );
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (response.getData() == null) {
                 formatterService.printError("Failed to create project: " + response.getMessage());
@@ -77,42 +78,98 @@ public class ProjectCommand {
 
     @ShellMethod(key = "project-update", value = "Update a project.")
     public void updateProject(
-            @ShellOption(value = "--id", help = "Project ID") String projectId
-    ) {
+            @ShellOption(value = "--id", help = "Project ID") String projectId,
+            @ShellOption(value = "--name", help = "Project name", defaultValue = ShellOption.NULL) String name,
+            @ShellOption(value = "--description", help = "Project description", defaultValue = ShellOption.NULL) String description,
+            @ShellOption(value = "--statusId", help = "Status ID", defaultValue = ShellOption.NULL) String statusId) {
         try {
             formatterService.printInfo("Updating project...");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/project-status", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
-
-            List<Map<String, Object>> statuses = response.getData();
-
-            List<String> headers = new ArrayList<>(statuses.get(0).keySet());
-
-            List<List<String>> data = statuses.stream()
-                    .map(status -> headers.stream()
-                            .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
-
-            formatterService.printTable(headers, data);
-
-            String name = formatterService.prompt("Enter project name: ");
-            String description = formatterService.prompt("Enter project description: ");
-            String statusId = formatterService.prompt("Enter status id: ");
-
-            Map<String, Object> status = new HashMap<>();
-            status.put("id", statusId);
-
+            // Prepare the project update payload
             Map<String, Object> project = new HashMap<>();
-            project.put("name", name);
-            project.put("description", description);
-            project.put("status", status);
 
+            // Add only the provided fields to the payload
+            if (name != null) {
+                project.put("name", name);
+            }
+            if (description != null) {
+                project.put("description", description);
+            }
+            if (statusId != null) {
+                Map<String, Object> status = new HashMap<>();
+                status.put("id", statusId);
+                project.put("status", status);
+            }
+
+            // If no fields are provided, prompt the user for all attributes
+            if (project.isEmpty()) {
+                APIResponse<List<Map<String, Object>>> response = requestService.get(
+                        "/project-status",
+                        new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                        });
+
+                List<Map<String, Object>> statuses = response.getData();
+
+                if (statuses == null || statuses.isEmpty()) {
+                    formatterService.printError("No statuses available.");
+                    return;
+                }
+
+                List<String> headers = new ArrayList<>(statuses.get(0).keySet());
+                List<List<String>> data = statuses.stream()
+                        .map(status -> headers.stream()
+                                .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
+                                .collect(Collectors.toList()))
+                        .collect(Collectors.toList());
+                formatterService.printTable(headers, data);
+
+                name = formatterService.prompt("Enter project name: ");
+                description = formatterService.prompt("Enter project description: ");
+                statusId = formatterService.prompt("Enter status id: ");
+
+                Map<String, Object> status = new HashMap<>();
+                status.put("id", statusId);
+
+                project.put("name", name);
+                project.put("description", description);
+                project.put("status", status);
+            }
+
+            if (name == null || description == null || statusId == null) {
+                APIResponse<Map<String, Object>> response = requestService.get(
+                        "/projects/" + projectId,
+                        new ParameterizedTypeReference<Map<String, Object>>() {
+                        });
+
+                if (response.getData() == null) {
+                    formatterService.printError("Failed to fetch project details: " + response.getMessage());
+                    return;
+                }
+
+                Map<String, Object> existingProject = response.getData();
+
+                // Fill in missing fields with existing project data
+                if (name == null) {
+                    name = (String) existingProject.get("name");
+                    project.put("name", name);
+                }
+                if (description == null) {
+                    description = (String) existingProject.get("description");
+                    project.put("description", description);
+                }
+                if (statusId == null) {
+                    Map<String, Object> status = (Map<String, Object>) existingProject.get("status");
+                    statusId = status != null ? String.valueOf(status.get("id")) : null;
+                    project.put("status", status);
+                }
+            }
+
+            // Send the update request
             APIResponse<Map<String, Object>> projectResponse = requestService.put(
                     "/projects/" + projectId,
                     project,
-                    new ParameterizedTypeReference<Map<String, Object>>() {}
-            );
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (projectResponse.getData() == null) {
                 formatterService.printError("Failed to update project: " + projectResponse.getMessage());
@@ -124,7 +181,7 @@ public class ProjectCommand {
             }
 
         } catch (Exception e) {
-            formatterService.printError("Error creating project: " + e.getMessage());
+            formatterService.printError("Error updating project: " + e.getMessage());
         }
     }
 
@@ -133,7 +190,9 @@ public class ProjectCommand {
         try {
             formatterService.printInfo("Fetching associated projects");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/projects", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/projects",
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> projects = response.getData();
 
@@ -172,12 +231,13 @@ public class ProjectCommand {
 
     @ShellMethod(key = "project-view-id", value = "List a user's projects with project ID")
     public void getUserProjectsById(
-            @ShellOption(value = "--id", help = "Project ID") String projectId
-    ) {
+            @ShellOption(value = "--id", help = "Project ID") String projectId) {
         try {
             formatterService.printInfo("Fetching associated project");
 
-            APIResponse<Map<String, Object>> response = requestService.get("/projects/" + projectId, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/projects/" + projectId,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (response.getStatusCode() == 403) {
                 formatterService.printWarning("No associated project found");
