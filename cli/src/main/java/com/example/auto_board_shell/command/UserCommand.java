@@ -27,7 +27,7 @@ public class UserCommand {
     }
 
     // users-view
-    @ShellMethod(key = "users-view", value = "View all users")
+    @ShellMethod(key = "users-list", value = "View users")
     public void usersView() {
         try {
             formatterService.printInfo("Fetching users");
@@ -51,35 +51,7 @@ public class UserCommand {
         }
     }
 
-    // TODO NEED to implement on api
-    // users-search --pattern "John"
-    @ShellMethod(key = "users-search", value = "Search users on first or last name")
-    public void usersSearch(
-            @ShellOption(value = "--pattern", help = "Phrase to pattern match") String pattern
-    ) {
-        try {
-            formatterService.printInfo("Searching for users whose details contain the keyword: " + pattern);
-
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/users/search/" + pattern, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
-
-            List<Map<String, Object>> users = response.getData();
-
-            List<String> headers = new ArrayList<>(users.get(0).keySet());
-
-            List<List<String>> data = users.stream()
-                    .map(status -> headers.stream()
-                            .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
-
-            formatterService.printTable(headers, data);
-
-        } catch (Exception e) {
-            formatterService.printError("Error fetching users: " + e.getMessage());
-        }
-    }
-
-    @ShellMethod(key = "users-search-by-id", value = "Search users by ID")
+    @ShellMethod(key = "users-search-id", value = "Search users by ID")
     public void usersSearchById(
             @ShellOption(value = "--id", help = "User ID") String id
     ) {
