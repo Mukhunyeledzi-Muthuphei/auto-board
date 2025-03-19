@@ -5,6 +5,7 @@ import com.example.autoboard.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
-        return ResponseEntity.status(201).body(createdUser); // Return 201 Created with the created user
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser); // Return 201 Created with the created user
     }
 
     @PutMapping("/{id}")
@@ -48,17 +49,19 @@ public class UserController {
             User updatedUser = userService.updateUser(id, userDetails);
             return ResponseEntity.ok(updatedUser); // Return 200 OK with the updated user
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build(); // Return 404 Not Found if the user does not exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 Not Found if the user does not
+                                                                        // exist
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.status(403).build(); // Return 403 Forbidden if the token is invalid
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Return 403 Forbidden if the token is invalid
         }
         if (!TokenHelper.parseIdToken(token).get("sub").equals(id)) {
-            return ResponseEntity.status(403).build(); // Return 403 Forbidden if the token does not match the user ID
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Return 403 Forbidden if the token does not
+                                                                        // match the user ID
         }
         userService.deleteUser(id);
         return ResponseEntity.ok().build(); // Return 200 OK after successful deletion

@@ -13,6 +13,7 @@ import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.UserRepository;
 import com.example.autoboard.service.GoogleAuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,8 +37,8 @@ public class GoogleAuthController {
             String response = googleAuthService.handleCallback(code);
             return ResponseEntity.ok(response); // Return 200 OK with the response
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error handling callback: " + e.getMessage()); // Return 500 Internal
-                                                                                                  // Server Error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error handling callback: " + e.getMessage()); // Return 500 Internal Server Error
         }
     }
 }
