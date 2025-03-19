@@ -100,3 +100,4 @@ public class UserControllerTest {
         verify(userService, times(1)).updateUser(anyString(), any(User.class));
     }
 }
+
