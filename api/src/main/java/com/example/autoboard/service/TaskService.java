@@ -1,5 +1,6 @@
 package com.example.autoboard.service;
 
+import com.example.autoboard.entity.Project;
 import com.example.autoboard.entity.Task;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.TaskRepository;
@@ -20,6 +21,8 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired ProjectService projectService;
+
     @Autowired
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -38,7 +41,16 @@ public class TaskService {
         return taskRepository.findByStatusIdAndAssignee(statusId, assignee);
     }
 
-    public Task createTask(Task task, User assignee) {
+    public Task createTask(Task task, User assignee, Long projectId) {
+        System.out.println("========================projectId================");
+        System.out.println(projectId);
+        System.out.println(assignee.getId());
+        System.out.println("Received Task Status: " + task.getStatus());
+        System.out.println("========================projectId================");
+        String userId = assignee.getId();
+        Project project = projectService.getProjectByIdForUser(projectId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found or not accessible"));
+        task.setProject(project);  // Ensure Task references a managed Project entity
         task.setAssignee(assignee);
         return taskRepository.save(task);
     }
@@ -74,6 +86,21 @@ public class TaskService {
         }
         task.setAssignee(assignee);
         return taskRepository.save(task);
+    }
+
+    // Get all tasks from all projects available to user
+    public List<Task> getTasksAvailableToUser(String userId) {
+        return taskRepository.findTasksAvailableToUser(userId);
+    }
+
+    // For fetching tasks assigned to a user
+    public List<Task> getTasksByUserId(String userId) {
+        return taskRepository.findTasksByAssigneeId(userId);
+    }
+
+    // For fetching a task by ID if user has access
+    public Optional<Task> getTasksById(Long taskId, String userId) {
+        return taskRepository.findTaskByIdAndUserAccess(taskId, userId);
     }
 
 }

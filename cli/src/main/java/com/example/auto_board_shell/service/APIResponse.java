@@ -2,6 +2,7 @@ package com.example.auto_board_shell.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+// JsonInclude.Include.NON_NULL exclude any fields that are null when serializing the object into JSON
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class APIResponse<T> {
     private int statusCode;
@@ -45,12 +46,4 @@ public class APIResponse<T> {
         this.data = data;
     }
 
-    @Override
-    public String toString() {
-        return "ApiResponse{" +
-                "statusCode=" + statusCode +
-                ", message='" + message + '\'' +
-                ", data=" + data +
-                '}';
-    }
 }

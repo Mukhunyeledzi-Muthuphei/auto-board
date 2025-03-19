@@ -12,6 +12,8 @@ public class GeneralCommand {
     @Autowired
     private FormatterService formatterService;
 
+    // Clears the terminal screen based on the operating system (Windows or Unix-based).
+    // Executes the appropriate command to clear the console, handling errors if any occur.
     public void clearTerminal() {
         try {
             String os = System.getProperty("os.name").toLowerCase();

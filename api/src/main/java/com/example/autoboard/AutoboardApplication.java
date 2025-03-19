@@ -1,7 +1,10 @@
 package com.example.autoboard;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import com.example.autoboard.service.DataSeeder;
 
 @SpringBootApplication
 public class AutoboardApplication {
@@ -10,4 +13,10 @@ public class AutoboardApplication {
 		SpringApplication.run(AutoboardApplication.class, args);
 	}
 
+	@Bean
+	public CommandLineRunner seedDatabase(DataSeeder dataSeeder) {
+		return args -> {
+			dataSeeder.seedDatabase();
+		};
+	}
 }
