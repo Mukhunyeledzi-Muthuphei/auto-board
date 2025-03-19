@@ -33,14 +33,14 @@ public class ProjectMemberCommand {
     // project-member-add --projectId 2 --userId 5
     @ShellMethod(key = "project-member-add", value = "View comments for a task")
     public void addProjectMember(
-            @ShellOption(value = "--projectId", help = "Project ID") String project_id,
-            @ShellOption(value = "--userId", help = "User ID") String user_id) {
+            @ShellOption(value = "--projectId", help = "Project ID") String projectId,
+            @ShellOption(value = "--userId", help = "User ID") String userId) {
 
         Map<String, Object> project = new HashMap<>();
-        project.put("id", project_id);
+        project.put("id", projectId);
 
         Map<String, Object> user = new HashMap<>();
-        user.put("id", user_id);
+        user.put("id", userId);
 
         Map<String, Object> projectMember = new HashMap<>();
         projectMember.put("project", project);
@@ -53,14 +53,14 @@ public class ProjectMemberCommand {
     // project-member-remove --projectId 2 --userId 5
     @ShellMethod(key = "project-member-remove", value = "View comments for a task")
     public void removeProjectMember(
-            @ShellOption(value = "--projectId", help = "Project ID") String project_id,
-            @ShellOption(value = "--userId", help = "User ID") String user_id) {
+            @ShellOption(value = "--projectId", help = "Project ID") String projectId,
+            @ShellOption(value = "--userId", help = "User ID") String userId) {
 
         Map<String, Object> project = new HashMap<>();
-        project.put("id", project_id);
+        project.put("id", projectId);
 
         Map<String, Object> user = new HashMap<>();
-        user.put("id", user_id);
+        user.put("id", userId);
 
         Map<String, Object> projectMember = new HashMap<>();
         projectMember.put("project", project);

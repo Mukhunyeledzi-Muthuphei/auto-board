@@ -124,8 +124,8 @@ public class TaskCommand {
             List<List<String>> data = statuses.stream()
                     .map(status -> headers.stream()
                             .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             if (title == null && description == null && statusId == null) {
                 formatterService.printTable(headers, data);
@@ -140,7 +140,6 @@ public class TaskCommand {
                 status.put("id", newStatusId);
             }
 
-            // Map<String, Object> task = new HashMap();
             if (title != null) {
                 existingTask.put("title", title);
             }
@@ -221,8 +220,8 @@ public class TaskCommand {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -264,8 +263,8 @@ public class TaskCommand {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -304,13 +303,13 @@ public class TaskCommand {
                             Map<String, Object> status = (Map<String, Object>) task.get("status");
                             return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
                         } else if (key.equals("project_id")) {
-                            Map<String, Object> project_id = (Map<String, Object>) task.get("project");
-                            return project_id != null ? String.valueOf(project_id.getOrDefault("id", "N/A")) : "N/A";
+                            Map<String, Object> projectId = (Map<String, Object>) task.get("project");
+                            return projectId != null ? String.valueOf(projectId.getOrDefault("id", "N/A")) : "N/A";
                         } else {
                             return String.valueOf(task.getOrDefault(key, "N/A"));
                         }
                     })
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 
@@ -321,11 +320,11 @@ public class TaskCommand {
 
     @ShellMethod(key = "task-list-project", value = "List all tasks for a specific project.")
     public void listTasksByProject(
-            @ShellOption(value = "--project-id", help = "Project ID") String project_id) {
+            @ShellOption(value = "--project-id", help = "Project ID") String projectId) {
         try {
             formatterService.printInfo("Fetching tasks for project...");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/project/" + project_id,
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/project/" + projectId,
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {
                     });
 
@@ -357,8 +356,8 @@ public class TaskCommand {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 

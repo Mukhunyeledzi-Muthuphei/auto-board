@@ -27,13 +27,13 @@ import org.springframework.beans.factory.annotation.Value;
 public class GoogleAuthCommand {
 
     private final HttpClient client = HttpClient.newHttpClient();
-    private String idToken;
 
     @Value("${cli.api.base-url}")
     private String baseUrl;
 
     @ShellMethod(key = "login", value = "Login to Google and fetch user info")
     public void login() throws IOException, InterruptedException {
+        String idToken;
         // Start local callback server
         CompletableFuture<String> tokenFuture = GoogleAuthService.startLocalCallbackServer(client, baseUrl);
 

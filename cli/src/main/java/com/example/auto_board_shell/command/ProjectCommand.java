@@ -119,8 +119,8 @@ public class ProjectCommand {
                 List<List<String>> data = statuses.stream()
                         .map(status -> headers.stream()
                                 .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                                .collect(Collectors.toList()))
-                        .collect(Collectors.toList());
+                                .toList())
+                        .toList();
                 formatterService.printTable(headers, data);
 
                 name = formatterService.prompt("Enter project name: ");
@@ -159,7 +159,6 @@ public class ProjectCommand {
                 }
                 if (statusId == null) {
                     Map<String, Object> status = (Map<String, Object>) existingProject.get("status");
-                    statusId = status != null ? String.valueOf(status.get("id")) : null;
                     project.put("status", status);
                 }
             }
@@ -219,8 +218,8 @@ public class ProjectCommand {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -260,7 +259,7 @@ public class ProjectCommand {
                             return String.valueOf(project.getOrDefault(key, "N/A"));
                         }
                     })
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 
@@ -269,10 +268,6 @@ public class ProjectCommand {
         }
     }
 
-    /**
-     * TODO - Method should delete a project and all tasks associated
-     * ONLY allow delete if JWT ID makes owner_id makes request
-     */
     @ShellMethod(key = "project-delete", value = "Delete a project")
     public void deleteProject(
             @ShellOption(value = "--id", help = "Project ID") String projectId) {

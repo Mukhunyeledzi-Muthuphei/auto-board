@@ -95,33 +95,20 @@ public class GoogleAuthService {
 
             String userId = userInfoJson.optString("sub", null);
             CurrentUser.setId(userId);
-
-            // Store id token and user info in a file
-            try (FileWriter fileWriter = new FileWriter("user_info.txt")) {
-                fileWriter.write("ID Token: " + idToken + "\n");
-                fileWriter.write("User Info: " + userInfo);
-            }
         } catch (Exception e) {
             System.err.println("Failed to decode id token: " + e.getMessage());
         }
     }
 
     public static void clearUserInfo() {
-        try {
-            CurrentUser.setToken(null);
-            CurrentUser.setUserName(null);
-            CurrentUser.setId(null);
-            new FileWriter("user_info.txt").close();
-        } catch (IOException e) {
-            System.err.println("Failed to delete user info: " + e.getMessage());
-        }
+        CurrentUser.setToken(null);
+        CurrentUser.setUserName(null);
+        CurrentUser.setId(null);
     }
 
     public static void deleteUserInfo(String baseUrl) {
         try {
             CurrentUser.setUserName(null);
-
-            new FileWriter("user_info.txt").close();
 
             // Call delete API to delete user info from the database
             HttpClient client = HttpClient.newHttpClient();

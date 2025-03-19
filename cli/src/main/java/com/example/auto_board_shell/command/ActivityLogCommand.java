@@ -20,6 +20,9 @@ public class ActivityLogCommand {
     private final RequestService requestService;
     private final FormatterService formatterService;
 
+    private static final String TASK_ID = "task_id";
+    private static final String TITLE = "title";
+
     @Autowired
     public ActivityLogCommand(RequestService requestService, FormatterService formatterService) {
         this.requestService = requestService;
@@ -29,12 +32,13 @@ public class ActivityLogCommand {
     // activity-log-project --id 2
     @ShellMethod(key = "activity-log-project", value = "View all task logs for a project")
     public void activityLogProject(
-            @ShellOption(value = "--id", help = "Project id") String id
-    ) {
+            @ShellOption(value = "--id", help = "Project id") String id) {
         try {
             formatterService.printInfo("Fetching project activity log");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/project/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/project/" + id,
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> projectActivityLog = response.getData();
 
@@ -43,23 +47,26 @@ public class ActivityLogCommand {
                 return;
             }
 
-            List<String> selectedHeaders = List.of("task_id", "title", "action", "timestamp", "id");
+            List<String> selectedHeaders = List.of(TASK_ID, TITLE, "action", "timestamp", "id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
             List<List<String>> data = projectActivityLog.stream()
                     .map(row -> selectedHeaders.stream()
                             .map(key -> {
-                                if (key.equals("task_id") || key.equals("title")) {
+                                if (key.equals(TASK_ID) || key.equals(TITLE)) {
                                     // Extract from nested 'task' field
                                     Map<String, Object> task = (Map<String, Object>) row.get("task");
-                                    return task != null ? String.valueOf(task.getOrDefault(key.equals("task_id") ? "id" : "title", "N/A")) : "N/A";
+                                    return task != null
+                                            ? String.valueOf(
+                                                    task.getOrDefault(key.equals(TASK_ID) ? "id" : TITLE, "N/A"))
+                                            : "N/A";
                                 } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -71,12 +78,13 @@ public class ActivityLogCommand {
     // activity-log-task --id 2
     @ShellMethod(key = "activity-log-task", value = "View task logs")
     public void activityLogTask(
-            @ShellOption(value = "--id", help = "Task id") String id
-    ) {
+            @ShellOption(value = "--id", help = "Task id") String id) {
         try {
             formatterService.printInfo("Fetching task activity log");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/task/" + id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/activity-log/task/" + id,
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> taskActivityLog = response.getData();
 
@@ -85,23 +93,26 @@ public class ActivityLogCommand {
                 return;
             }
 
-            List<String> selectedHeaders = List.of("task_id", "title", "action", "timestamp", "id");
+            List<String> selectedHeaders = List.of(TASK_ID, TITLE, "action", "timestamp", "id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
             List<List<String>> data = taskActivityLog.stream()
                     .map(row -> selectedHeaders.stream()
                             .map(key -> {
-                                if (key.equals("task_id") || key.equals("title")) {
+                                if (key.equals(TASK_ID) || key.equals(TITLE)) {
                                     // Extract from nested 'task' field
                                     Map<String, Object> task = (Map<String, Object>) row.get("task");
-                                    return task != null ? String.valueOf(task.getOrDefault(key.equals("task_id") ? "id" : "title", "N/A")) : "N/A";
+                                    return task != null
+                                            ? String.valueOf(
+                                                    task.getOrDefault(key.equals(TASK_ID) ? "id" : TITLE, "N/A"))
+                                            : "N/A";
                                 } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 

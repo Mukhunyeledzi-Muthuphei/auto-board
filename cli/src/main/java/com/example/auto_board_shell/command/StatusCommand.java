@@ -32,7 +32,9 @@ public class StatusCommand {
         try {
             formatterService.printInfo("Fetching available project statuses");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/project-status", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/project-status",
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> statuses = response.getData();
 
@@ -41,8 +43,8 @@ public class StatusCommand {
             List<List<String>> data = statuses.stream()
                     .map(status -> headers.stream()
                             .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -54,12 +56,13 @@ public class StatusCommand {
     // project-status-search-id --id 2
     @ShellMethod(key = "project-status-search-id", value = "Search project status by ID")
     public void findProjectStatusById(
-            @ShellOption(help = "Project Status ID") String id
-    ) {
+            @ShellOption(help = "Project Status ID") String id) {
         try {
             formatterService.printInfo("Searching for project status with ID: " + id);
 
-            APIResponse<Map<String, Object>> response = requestService.get("/project-status/" + id, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/project-status/" + id,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> status = response.getData();
 
@@ -71,7 +74,7 @@ public class StatusCommand {
             List<String> headers = new ArrayList<>(status.keySet());
             List<List<String>> data = List.of(headers.stream()
                     .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 
@@ -83,12 +86,13 @@ public class StatusCommand {
     // project-status-view --name "Completed"
     @ShellMethod(key = "project-status-search-name", value = "Find project status by name")
     public void findProjectStatusByName(
-            @ShellOption(help = "Project Status Name") String name
-    ) {
+            @ShellOption(help = "Project Status Name") String name) {
         try {
             formatterService.printInfo("Searching for project status with name: " + name);
 
-            APIResponse<Map<String, Object>> response = requestService.get("/project-status/name/" + name, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/project-status/name/" + name,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> status = response.getData();
 
@@ -100,7 +104,7 @@ public class StatusCommand {
             List<String> headers = new ArrayList<>(status.keySet());
             List<List<String>> data = List.of(headers.stream()
                     .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 
@@ -115,7 +119,9 @@ public class StatusCommand {
         try {
             formatterService.printInfo("Fetching available task statuses");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/task-status", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/task-status",
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> statuses = response.getData();
 
@@ -124,8 +130,8 @@ public class StatusCommand {
             List<List<String>> data = statuses.stream()
                     .map(status -> headers.stream()
                             .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -137,12 +143,13 @@ public class StatusCommand {
     // task-status-search-id --id 2
     @ShellMethod(key = "task-status-search-id", value = "Search task status by ID")
     public void findTaskStatusById(
-            @ShellOption(help = "Task Status ID") String id
-    ) {
+            @ShellOption(help = "Task Status ID") String id) {
         try {
             formatterService.printInfo("Searching for task status with ID: " + id);
 
-            APIResponse<Map<String, Object>> response = requestService.get("/task-status/" + id, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/task-status/" + id,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> status = response.getData();
 
@@ -154,7 +161,7 @@ public class StatusCommand {
             List<String> headers = new ArrayList<>(status.keySet());
             List<List<String>> data = List.of(headers.stream()
                     .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 
@@ -166,12 +173,13 @@ public class StatusCommand {
     // task-status-view --name "Completed"
     @ShellMethod(key = "task-status-search-name", value = "Find task status by name")
     public void findTaskStatusByName(
-            @ShellOption(help = "Task Status Name") String name
-    ) {
+            @ShellOption(help = "Task Status Name") String name) {
         try {
             formatterService.printInfo("Searching for task status with name: " + name);
 
-            APIResponse<Map<String, Object>> response = requestService.get("/task-status/name/" + name, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/task-status/name/" + name,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> status = response.getData();
 
@@ -183,7 +191,7 @@ public class StatusCommand {
             List<String> headers = new ArrayList<>(status.keySet());
             List<List<String>> data = List.of(headers.stream()
                     .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 

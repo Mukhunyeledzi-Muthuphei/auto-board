@@ -32,7 +32,9 @@ public class UserCommand {
         try {
             formatterService.printInfo("Fetching users");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/users", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/users",
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    });
 
             List<Map<String, Object>> users = response.getData();
 
@@ -41,8 +43,8 @@ public class UserCommand {
             List<List<String>> data = users.stream()
                     .map(status -> headers.stream()
                             .map(key -> String.valueOf(status.getOrDefault(key, "N/A")))
-                            .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+                            .toList())
+                    .toList();
 
             formatterService.printTable(headers, data);
 
@@ -53,12 +55,13 @@ public class UserCommand {
 
     @ShellMethod(key = "users-search-id", value = "Search users by ID")
     public void usersSearchById(
-            @ShellOption(value = "--id", help = "User ID") String id
-    ) {
+            @ShellOption(value = "--id", help = "User ID") String id) {
         try {
             formatterService.printInfo("Searching for user with ID: " + id);
 
-            APIResponse<Map<String, Object>> response = requestService.get("/users/" + id, new ParameterizedTypeReference<Map<String, Object>>() {});
+            APIResponse<Map<String, Object>> response = requestService.get("/users/" + id,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> user = response.getData();
 

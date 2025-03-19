@@ -2,6 +2,10 @@ package com.example.auto_board_shell.helpers;
 
 public class CurrentUser {
 
+    // Private constructor to prevent instantiation
+    private CurrentUser() {
+    }
+
     private static String token;
     private static String userName;
     private static String id;
