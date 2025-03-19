@@ -25,8 +25,6 @@ public class TaskCommand {
         this.requestService = requestService;
         this.formatterService = formatterService;
     }
-
-    // TODO FIX
     @ShellMethod(key = "task-create", value = "Create a new task for a project.")
     public void createTask(
             @ShellOption(value = "--project-id", help = "Project ID") String project_id) {
@@ -43,7 +41,7 @@ public class TaskCommand {
             status.put("id", "1");
 
             Map<String, Object> project = new HashMap<>();
-            status.put("id", project_id);
+            project.put("id", project_id);
 
             Map<String, Object> task = new HashMap<>();
             task.put("title", title);
@@ -84,6 +82,29 @@ public class TaskCommand {
         try {
             formatterService.printInfo("Updating task...");
 
+            
+            // Fetch the existing task details
+            APIResponse<Map<String, Object>> existingTaskResponse = requestService.get(
+                "/tasks/" + taskId,
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+        );
+
+        Map<String, Object> existingTaskData  = existingTaskResponse.getData();
+        
+        if (existingTaskData == null) {
+            formatterService.printError("Failed to fetch existing task: " + existingTaskResponse.getMessage());
+            return;
+        }
+
+        Map<String, Object> existingTask = existingTaskResponse.getData();
+
+        // Extract the existing project
+        Map<String, Object> existingProject = (Map<String, Object>) existingTask.get("project");
+        if (existingProject == null) {
+            formatterService.printError("Existing task does not have a project assigned.");
+            return;
+        }
+
             APIResponse<List<Map<String, Object>>> response = requestService.get("/task-status", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
             List<Map<String, Object>> statuses = response.getData();
@@ -103,12 +124,14 @@ public class TaskCommand {
             String statusId = formatterService.prompt("Enter status Id: ");
 
             Map<String, Object> status = new HashMap<>();
-            status.put("id", statusId);
+            long newStatusId = Integer.valueOf(statusId);
+            status.put("id", newStatusId);
 
-            Map<String, Object> task = new HashMap<>();
+            Map<String, Object> task = new HashMap();
             task.put("title", title);
             task.put("description", description);
-            task.put("status", statusId);
+            task.put("status", status);
+            task.put("project", existingProject); // Include the existing project;
 
             APIResponse<Map<String, Object>> taskResponse = requestService.put(
                     "/tasks/" + taskId,

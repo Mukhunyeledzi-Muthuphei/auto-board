@@ -2,8 +2,11 @@ package com.example.autoboard.service;
 
 import com.example.autoboard.entity.Project;
 import com.example.autoboard.entity.Task;
+import com.example.autoboard.entity.TaskStatus;
 import com.example.autoboard.entity.User;
+import com.example.autoboard.repository.ProjectRepository;
 import com.example.autoboard.repository.TaskRepository;
+import com.example.autoboard.repository.TaskStatusRepository;
 import com.example.autoboard.repository.UserRepository;
 
 import java.util.List;
@@ -23,6 +26,10 @@ public class TaskService {
 
     @Autowired ProjectService projectService;
 
+    @Autowired ProjectRepository projectRepository;
+
+    @Autowired TaskStatusRepository taskStatusRepository;
+
     @Autowired
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -41,28 +48,30 @@ public class TaskService {
         return taskRepository.findByStatusIdAndAssignee(statusId, assignee);
     }
 
-    public Task createTask(Task task, User assignee, Long projectId) {
-        System.out.println("========================projectId================");
-        System.out.println(projectId);
-        System.out.println(assignee.getId());
-        System.out.println("Received Task Status: " + task.getStatus());
-        System.out.println("========================projectId================");
-        String userId = assignee.getId();
-        Project project = projectService.getProjectByIdForUser(projectId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found or not accessible"));
-        task.setProject(project);  // Ensure Task references a managed Project entity
-        task.setAssignee(assignee);
+    public Task createTask(Task task) {
         return taskRepository.save(task);
     }
 
-    public Task updateTask(Long id, Task task, User assignee) {
-        Task existingTask = getTaskById(id, assignee);
-        existingTask.setTitle(task.getTitle());
-        existingTask.setDescription(task.getDescription());
-        existingTask.setStatus(task.getStatus());
-        existingTask.setProject(task.getProject());
-        existingTask.setAssignee(task.getAssignee());
-        return taskRepository.save(existingTask);
+    public Task updateTask(Long id, Task task, String assignee) {
+       Optional<Task> taskOptional = taskRepository.findById(id);
+    if (taskOptional.isPresent()) {
+        Task tasks = taskOptional.get();
+        if (!tasks.getAssignee().getId().equals(assignee)) {
+            return null;
+        }
+        else{
+            tasks.setTitle(task.getTitle());
+            tasks.setDescription(task.getDescription());
+            tasks.setStatus(task.getStatus());
+            tasks.setProject(task.getProject());
+        }
+
+        Task savedTask = taskRepository.save(tasks);
+
+        return taskRepository.save(savedTask);
+    } else {
+        return null;
+    }
     }
 
     public void deleteTask(Long id, String assignee) {
