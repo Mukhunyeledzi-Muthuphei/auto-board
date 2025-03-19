@@ -1,6 +1,5 @@
 package com.example.autoboard.service;
 
-import com.example.autoboard.entity.ProjectStatus;
 import com.example.autoboard.entity.TaskStatus;
 import com.example.autoboard.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
