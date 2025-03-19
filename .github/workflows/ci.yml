@@ -224,7 +224,7 @@ jobs:
   deploy:
     name: Deploy Jobs
     runs-on: ubuntu-latest
-    needs: terraform
+    needs: build
 
     concurrency:
       group: ${{ github.workflow }}-deploy-${{ github.ref }}
