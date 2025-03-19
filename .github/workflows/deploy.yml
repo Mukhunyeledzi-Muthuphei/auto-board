@@ -37,7 +37,6 @@ jobs:
           path: api/target/*.jar
 
   deploy:
-    # Depends on build's job
     needs: build
     name: Deploy to Elastic Beanstalk
     runs-on: ubuntu-latest
