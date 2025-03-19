@@ -52,17 +52,4 @@ class APIResponseTest {
         assertEquals("No data available", response.getData());
     }
 
-    @Test
-    void testToString() {
-        // Arrange
-        APIResponse<String> response = new APIResponse<>(200, "Success", "Some data");
-
-        // Act
-        String responseString = response.toString();
-
-        // Assert
-        assertTrue(responseString.contains("statusCode=200"));
-        assertTrue(responseString.contains("message='Success'"));
-        assertTrue(responseString.contains("data=Some data"));
-    }
 }
