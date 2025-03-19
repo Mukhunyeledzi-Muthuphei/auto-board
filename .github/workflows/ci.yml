@@ -21,7 +21,6 @@ permissions:
   id-token: write
   contents: read
 
-
 jobs:
   build:
     name: Build Project
@@ -52,6 +51,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze code quality
+        working-directory: ./api
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=auto-board_auto-board
