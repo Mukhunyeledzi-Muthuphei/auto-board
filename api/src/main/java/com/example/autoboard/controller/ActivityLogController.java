@@ -28,19 +28,24 @@ public class ActivityLogController {
     }
 
     @GetMapping
-    public List<ActivityLog> getAllLogs(@RequestHeader("Authorization") String token) throws VerificationException {
+    public ResponseEntity<List<ActivityLog>> getAllLogs(@RequestHeader("Authorization") String token)
+            throws VerificationException {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return List.of();
+            return ResponseEntity.status(401).body(List.of()); // Unauthorized
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
-        return activityLogService.getAllLogs(userId);
+        List<ActivityLog> logs = activityLogService.getAllLogs(userId);
+        if (logs.isEmpty()) {
+            return ResponseEntity.status(404).body(List.of()); // Not Found
+        }
+        return ResponseEntity.ok(logs); // Success
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ActivityLog> getLogById(@PathVariable Long id, @RequestHeader("Authorization") String token)
             throws VerificationException {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(401).body(null); // Unauthorized
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         Optional<ActivityLog> log = activityLogService.getLogById(id, userId);

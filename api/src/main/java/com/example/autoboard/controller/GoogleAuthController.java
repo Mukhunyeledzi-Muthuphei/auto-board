@@ -12,6 +12,7 @@ import com.example.autoboard.helpers.TokenHelper;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.repository.UserRepository;
 import com.example.autoboard.service.GoogleAuthService;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,12 +25,19 @@ public class GoogleAuthController {
     }
 
     @GetMapping("/login-url")
-    public String getLoginUrl() {
-        return googleAuthService.getLoginUrl();
+    public ResponseEntity<String> getLoginUrl() {
+        String loginUrl = googleAuthService.getLoginUrl();
+        return ResponseEntity.ok(loginUrl); // Return 200 OK with the login URL
     }
 
     @GetMapping("/callback")
-    public String handleCallback(@RequestParam("code") String code) {
-        return googleAuthService.handleCallback(code);
+    public ResponseEntity<String> handleCallback(@RequestParam("code") String code) {
+        try {
+            String response = googleAuthService.handleCallback(code);
+            return ResponseEntity.ok(response); // Return 200 OK with the response
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error handling callback: " + e.getMessage()); // Return 500 Internal
+                                                                                                  // Server Error
+        }
     }
 }
