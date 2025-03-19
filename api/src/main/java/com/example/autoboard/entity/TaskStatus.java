@@ -14,10 +14,26 @@ public class TaskStatus {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public TaskStatus() {}
+    public TaskStatus() {
+    }
 
-    public Long getId() { return task_status_id; }
-    public void setId(Long task_status_id) { this.task_status_id = task_status_id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public TaskStatus(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return task_status_id;
+    }
+
+    public void setId(Long task_status_id) {
+        this.task_status_id = task_status_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
