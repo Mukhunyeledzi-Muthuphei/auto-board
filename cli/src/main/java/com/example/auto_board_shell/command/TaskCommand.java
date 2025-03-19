@@ -28,7 +28,7 @@ public class TaskCommand {
 
     @ShellMethod(key = "task-create", value = "Create a new task for a project.")
     public void createTask(
-            @ShellOption(value = "--project-id", help = "Project ID") String project_id) {
+            @ShellOption(value = "--projectId", help = "Project ID") String project_id) {
         try {
             formatterService.printInfo("Creating new task...");
 
@@ -81,7 +81,6 @@ public class TaskCommand {
         }
     }
 
-    // TODO FIX
     @ShellMethod(key = "task-update", value = "Update a task.")
     public void updateTask(
             @ShellOption(value = "--id", help = "Task ID") String taskId,
@@ -172,7 +171,6 @@ public class TaskCommand {
         }
     }
 
-    // TODO FIX
     @ShellMethod(key = "task-delete", value = "Delete a task.")
     public void deleteTask(
             @ShellOption(value = "--id", help = "Task ID") String taskId) {
@@ -321,7 +319,7 @@ public class TaskCommand {
 
     @ShellMethod(key = "task-list-project", value = "List all tasks for a specific project.")
     public void listTasksByProject(
-            @ShellOption(value = "--project-id", help = "Project ID") String project_id) {
+            @ShellOption(value = "--projectId", help = "Project ID") String project_id) {
         try {
             formatterService.printInfo("Fetching tasks for project...");
 
@@ -369,13 +367,13 @@ public class TaskCommand {
 
     @ShellMethod(key = "task-assign", value = "Assign a task to a project member.")
     public void assignTask(
-            @ShellOption(value = "--task-id", help = "Task ID") String taskId,
-            @ShellOption(value = "--assignee-id", help = "Assignee ID") String assigneeId) {
+            @ShellOption(value = "--taskId", help = "Task ID") String taskId,
+            @ShellOption(value = "--assigneeId", help = "Assignee ID") String assigneeId) {
         try {
             formatterService.printInfo("Assigning task...");
 
             Map<String, Object> assignee = new HashMap<>();
-            assignee.put("id", CurrentUser.getId());
+            assignee.put("id", assigneeId);
 
             Map<String, Object> task = new HashMap<>();
             task.put("assignee", assignee);
