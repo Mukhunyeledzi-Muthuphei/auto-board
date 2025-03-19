@@ -39,7 +39,7 @@ public class ActivityLogCommand {
             List<Map<String, Object>> projectActivityLog = response.getData();
 
             if (projectActivityLog == null || projectActivityLog.isEmpty()) {
-                formatterService.printWarning("No task activity log found");
+                formatterService.printWarning("No project activity log found");
                 return;
             }
 
