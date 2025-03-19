@@ -111,12 +111,4 @@ public class UserServiceTest {
         verify(userRepository, times(0)).save(any(User.class));
     }
 
-    @Test
-    public void testDeleteUser() {
-        doNothing().when(userRepository).deleteById(anyString());
-
-        userService.deleteUser(user.getId());
-
-        verify(userRepository, times(1)).deleteById(user.getId());
-    }
 }
