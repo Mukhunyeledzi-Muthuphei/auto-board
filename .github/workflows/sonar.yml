@@ -56,5 +56,6 @@ jobs:
             -Dsonar.projectKey=auto-board_auto-board \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.inclusions="src/**/*.java" \
+            -Dsonar.sources=src/main/java \
             -Dsonar.exclusions="**/test/**" \
             -DskipTests
