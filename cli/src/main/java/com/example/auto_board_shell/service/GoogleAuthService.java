@@ -23,7 +23,6 @@ import com.example.auto_board_shell.helpers.CurrentUser;
 import org.json.JSONObject;
 import com.example.auto_board_shell.service.GoogleAuthService;
 
-@Service
 public class GoogleAuthService {
 
     public static CompletableFuture<String> startLocalCallbackServer(HttpClient client, String baseUrl)
