@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "~> 5.0"
     }
   }
 
@@ -63,14 +63,15 @@ resource "aws_iam_role" "beanstalk_role" {
 
 // Database instance creation
 resource "aws_db_instance" "auto-board-db" {
-  identifier = "auto-board-db-instance"
+  identifier           = "auto-board-db-instance"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
+  db_name              = "auto_board"
   engine_version       = "17.1"
   instance_class       = "db.t3.micro"
-  username             = "postgres"
-  password             = "Password123"
+  username             = "${var.db_username}"
+  password             = "${var.db_password}"
   parameter_group_name = "default.postgres17"
   skip_final_snapshot  = true
   publicly_accessible  = true
@@ -80,6 +81,16 @@ resource "aws_db_instance" "auto-board-db" {
   # Subnet group is required for multi az and recommended for single az.
   db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
 
+}
+
+resource "aws_iam_role_policy_attachment" "beanstalk_web_tier" {
+  role       = aws_iam_role.beanstalk_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+}
+
+resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
+  name = "beanstalk-instance-profile"
+  role = aws_iam_role.beanstalk_role.name
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
@@ -146,104 +157,112 @@ resource "aws_subnet" "subnet_b" {
   availability_zone = "af-south-1b"
 }
 
-// User policies
-
-resource "aws_iam_role_policy_attachment" "beanstalk_web_tier" {
-  role       = aws_iam_role.beanstalk_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
-}
-
-resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
-  name = "beanstalk-instance-profile"
-  role = aws_iam_role.beanstalk_role.name
-}
-
 resource "aws_s3_bucket" "beanstalk_bucket" {
-  bucket = "beanstalk-bucket-example"
+  bucket = "auto-board-bucket"
+
 }
 
-# resource "aws_s3_object" "beanstalk_zip" {
-#   bucket = aws_s3_bucket.beanstalk_bucket.id
-#   key    = "my-application.zip"
-#   source = "../my-application.zip" #local path to zip file
-# }
-#
-# resource "aws_elastic_beanstalk_application_version" "example" {
-#   name        = "v1"
-#   application = aws_elastic_beanstalk_application.auto_board.name
-#   bucket      = aws_s3_bucket.beanstalk_bucket.id
-#   key         = aws_s3_object.beanstalk_zip.key
-# }
-#
-# resource "aws_elastic_beanstalk_environment" "auto_board_env" {
-#   name                = "auto-board-env"
-#   application         = aws_elastic_beanstalk_application.auto_board.name
-#   solution_stack_name = "64bit Amazon Linux 2023 v4.4.4 running Corretto 21"
-#   version_label       = aws_elastic_beanstalk_application_version.example.name
-#
-#   setting {
-#     namespace = "aws:autoscaling:launchconfiguration"
-#     name      = "InstanceType"
-#     value     = "t3.micro"
-#   }
-#
-#   setting {
-#     namespace = "aws:autoscaling:launchconfiguration"
-#     name      = "IamInstanceProfile"
-#     value     = aws_iam_instance_profile.beanstalk_instance_profile.arn
-#   }
-#
-#   setting {
-#     namespace = "aws:ec2:vpc"
-#     name      = "VPCId"
-#     value     = "vpc-019dcf1180ff57389"
-#   }
-#
-#   setting {
-#     namespace = "aws:ec2:vpc"
-#     name      = "Subnets"
-#     value     = "subnet-096ddbd84d170a394,subnet-0add9f41b736e54a6,subnet-05356ef13c7540e5e"
-#   }
-#
-#   setting {
-#     namespace = "aws:ec2:vpc"
-#     name      = "ELBSubnets"
-#     value     = "subnet-096ddbd84d170a394,subnet-0add9f41b736e54a6,subnet-05356ef13c7540e5e"
-#   }
-#
-#   setting {
-#     namespace = "aws:ec2:vpc"
-#     name      = "ELBScheme"
-#     value     = "internet-facing" # or internal
-#   }
-#
-#   setting {
-#     namespace = "aws:autoscaling:launchconfiguration"
-#     name      = "SecurityGroups"
-#     value     = "sg-04d4ae7fe299a3df8"
-#   }
-#
-#   setting {
-#     namespace = "aws:elasticbeanstalk:environment"
-#     name      = "ServiceRole"
-#     value     = "AWSServiceRoleForElasticBeanstalk"
-#   }
-#
-#   setting {
-#     namespace = "aws:elbv2:loadbalancer"
-#     name      = "SecurityGroups"
-#     value     = "sg-04d4ae7fe299a3df8"
-#   }
-#
-#   setting {
-#     namespace = "aws:elasticbeanstalk:application:environment"
-#     name      = "PORT"
-#     value     = "8080" # Match your Java app's listening port
-#   }
-#
-#   setting {
-#     namespace = "aws:elbv2:listener:default"
-#     name      = "ListenerEnabled"
-#     value     = "true"
-#   }
-# }
+resource "aws_elastic_beanstalk_environment" "auto_board_env" {
+  name                = "auto-board-env"
+  application         = aws_elastic_beanstalk_application.auto_board.name
+  solution_stack_name = "64bit Amazon Linux 2023 v4.4.4 running Corretto 21"
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "InstanceType"
+    value     = "t3.micro"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     = aws_iam_instance_profile.beanstalk_instance_profile.arn
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = "vpc-019dcf1180ff57389"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "Subnets"
+    value     = "subnet-096ddbd84d170a394,subnet-0add9f41b736e54a6,subnet-05356ef13c7540e5e"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "ELBSubnets"
+    value     = "subnet-096ddbd84d170a394,subnet-0add9f41b736e54a6,subnet-05356ef13c7540e5e"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "ELBScheme"
+    value     = "internet-facing" # or internal
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    value     = "sg-04d4ae7fe299a3df8"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "ServiceRole"
+    value     = "AWSServiceRoleForElasticBeanstalk"
+  }
+
+  setting {
+    namespace = "aws:elbv2:loadbalancer"
+    name      = "SecurityGroups"
+    value     = "sg-04d4ae7fe299a3df8"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "PORT"
+    value     = "8080"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:default"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
+
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_HOST_URL"
+    value             = "${aws_db_instance.auto-board-db.address}"
+  }
+
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_NAME"
+    value             ="${aws_db_instance.auto-board-db.db_name}"
+  }
+
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_USER"
+    value             ="${aws_db_instance.auto-board-db.username}"
+  }
+
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="DB_PASSWORD"
+    value             ="${var.db_password}"
+  }
+
+  setting {
+    namespace         ="aws:elasticbeanstalk:application:environment"
+    name              ="GOOGLE_CLIENT_SECRET"
+    value             ="${var.google_client_secret}"
+  }
+
+  depends_on          =[aws_db_instance.auto-board-db]
+
+}
