@@ -21,6 +21,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.example.auto_board_shell.helpers.CurrentUser;
 import org.json.JSONObject;
 import com.example.auto_board_shell.service.GoogleAuthService;
+import org.springframework.beans.factory.annotation.Value;
 
 @ShellComponent
 public class GoogleAuthCommand {
@@ -28,14 +29,17 @@ public class GoogleAuthCommand {
     private final HttpClient client = HttpClient.newHttpClient();
     private String idToken;
 
+    @Value("${cli.api.base-url}")
+    private String baseUrl;
+
     @ShellMethod(key = "login", value = "Login to Google and fetch user info")
     public void login() throws IOException, InterruptedException {
         // Start local callback server
-        CompletableFuture<String> tokenFuture = GoogleAuthService.startLocalCallbackServer(client);
+        CompletableFuture<String> tokenFuture = GoogleAuthService.startLocalCallbackServer(client, baseUrl);
 
         // 1️⃣ Request login URL from API
         HttpRequest loginRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/auth/login-url"))
+                .uri(URI.create(baseUrl + "/auth/login-url"))
                 .GET()
                 .build();
 
@@ -74,7 +78,7 @@ public class GoogleAuthCommand {
 
     @ShellMethod(key = "delete", value = "Delete user info")
     public void delete() {
-        GoogleAuthService.deleteUserInfo();
+        GoogleAuthService.deleteUserInfo(baseUrl);
     }
 
 }

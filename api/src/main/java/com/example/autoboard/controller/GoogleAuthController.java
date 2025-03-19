@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class GoogleAuthController {
 
     private final GoogleAuthService googleAuthService;

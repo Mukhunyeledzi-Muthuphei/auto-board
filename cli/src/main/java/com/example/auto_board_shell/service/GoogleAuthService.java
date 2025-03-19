@@ -23,8 +23,12 @@ import com.example.auto_board_shell.helpers.CurrentUser;
 import org.json.JSONObject;
 import com.example.auto_board_shell.service.GoogleAuthService;
 
+@Service
 public class GoogleAuthService {
-    public static CompletableFuture<String> startLocalCallbackServer(HttpClient client) throws IOException {
+
+    public static CompletableFuture<String> startLocalCallbackServer(HttpClient client, String baseUrl)
+            throws IOException {
+
         CompletableFuture<String> tokenFuture = new CompletableFuture<>();
         HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
         server.createContext("/auth/callback", new HttpHandler() {
@@ -38,7 +42,7 @@ public class GoogleAuthService {
                         try {
                             // Send the code to the /auth/callback API to get the id token
                             HttpRequest tokenRequest = HttpRequest.newBuilder()
-                                    .uri(URI.create("http://localhost:8080/auth/callback?code=" + code))
+                                    .uri(URI.create(baseUrl + "/auth/callback?code=" + code))
                                     .GET()
                                     .build();
 
@@ -114,7 +118,7 @@ public class GoogleAuthService {
         }
     }
 
-    public static void deleteUserInfo() {
+    public static void deleteUserInfo(String baseUrl) {
         try {
             CurrentUser.setUserName(null);
 
@@ -123,7 +127,7 @@ public class GoogleAuthService {
             // Call delete API to delete user info from the database
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/api/users/" + CurrentUser.getId()))
+                    .uri(URI.create(baseUrl + "/api/users/" + CurrentUser.getId()))
                     .header("Authorization", CurrentUser.getToken())
                     .DELETE()
                     .build();
