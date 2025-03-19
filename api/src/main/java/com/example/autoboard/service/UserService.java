@@ -22,10 +22,12 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    @Deprecated
     public User createUser(User user) {
         return userRepository.save(user);
     }
 
+    @Deprecated
     public User updateUser(String id, User userDetails) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
@@ -36,9 +38,5 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found with id " + id);
         }
-    }
-
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
     }
 }
