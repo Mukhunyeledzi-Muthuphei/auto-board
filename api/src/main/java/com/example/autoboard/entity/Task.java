@@ -17,15 +17,15 @@ public class Task {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "status_id", referencedColumnName = "task_status_id", nullable = false)
     private TaskStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "assignee_id", nullable = true)
+    @JoinColumn(name = "assignee_id", referencedColumnName = "user_id", nullable = true)
     private User assignee;
 
     public Task() {

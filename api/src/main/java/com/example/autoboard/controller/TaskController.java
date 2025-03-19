@@ -1,6 +1,7 @@
 package com.example.autoboard.controller;
 
 import com.example.autoboard.entity.Task;
+import com.example.autoboard.entity.TaskStatus;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.helpers.TokenHelper;
 import com.example.autoboard.service.TaskService;
@@ -16,6 +17,7 @@ import com.example.autoboard.helpers.ActionType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -33,21 +35,76 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    // Return all tasks for all projects that a user has access to, either owner or project member
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.getAlltasks();
-        return ResponseEntity.ok(tasks);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-
+    public ResponseEntity<List<Task>> getAllTasks(
+            @RequestHeader("Authorization") String token
+    ) {
+        // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        // Extract user ID
         String userId = TokenHelper.extractUserIdFromToken(token);
-        Task task = taskService.getTaskById(id, new User(userId));
-        return ResponseEntity.ok(task);
+
+        // Task service to run SQL
+        List<Task> tasks = taskService.getTasksAvailableToUser(userId);
+
+        // Check if null
+        if (tasks == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // Return tasks
+        return ResponseEntity.ok(tasks);
+    }
+
+    // Return tasks assigned to a user
+    @GetMapping("/assigned")
+    public ResponseEntity<List<Task>> getTasksByUserId(
+            @RequestHeader("Authorization") String token
+    ) {
+        // Validate token
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Extract user ID
+        String userId = TokenHelper.extractUserIdFromToken(token);
+
+        // Task service to run SQL
+        List<Task> tasks = taskService.getTasksByUserId(userId);
+
+        // Check if null
+        if (tasks == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // Return tasks
+        return ResponseEntity.ok(tasks);
+    }
+
+    // Return task if user is project member or owner
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token
+    ) {
+        // Validate token
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Extract user ID
+        String userId = TokenHelper.extractUserIdFromToken(token);
+
+        // Get task by ID if user has access
+        Optional<Task> task = taskService.getTasksById(id, userId);
+
+        // Return task or not found status
+        return task.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("/status/{statusId}")
@@ -64,15 +121,19 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Task> createTask(
+            @RequestBody Task task,
+            @RequestHeader("Authorization") String token
+    ) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
-        if (!task.getAssignee().getId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        Task createTask = taskService.createTask(task, new User(userId));
+        System.out.println(task.getProject().getId());
+        TaskStatus defaultStatus = new TaskStatus();
+        defaultStatus.setId(1L);
+        task.setStatus(defaultStatus);
+        Task createTask = taskService.createTask(task, new User(userId), 5L);
         ActionType action = ActionType.CREATE_TASK;
         activityLogService.createLog(createTask, action.name());
         return ResponseEntity.status(HttpStatus.CREATED).body(createTask);
@@ -126,5 +187,7 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
 
 }
