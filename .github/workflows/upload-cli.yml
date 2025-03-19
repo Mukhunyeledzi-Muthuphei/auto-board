@@ -1,104 +1,104 @@
-name: Build and Upload CLI JAR to S3
-
-on:
-  push:
-    branches:
-      - 'main'
-      - 'chris/feature/upload-shell-s3'
-    paths:
-      - 'cli/**'
-      - '.github/workflows/upload-cli.yml'
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      # 📥 Checkout the repository
-      - name: 📥 Checkout code
-        uses: actions/checkout@v2
-
-      # ☕ Set up Java environment
-      - name: ☕ Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          java-package: jdk
-          architecture: x64
-
-      # 🏗️ Build the Maven project in the cli directory
-      - name: 🏗️ Build with Maven
-        run: mvn clean install -DskipTests
-        working-directory: ./cli
-
-      # 🔧 Install AWS CLI
-      - name: 🔧 Install AWS CLI
-        run: |
-          sudo apt-get install -y python3-pip
-          python3 -m pip install --upgrade awscli
-
-      # 🪣 Ensure S3 bucket exists (create if missing)
-      - name: 🪣 Ensure S3 bucket exists
-        run: |
-          aws s3api head-bucket --bucket ${{ secrets.BUCKET_NAME }} || aws s3 mb s3://${{ secrets.BUCKET_NAME }} --region ${{ secrets.AWS_REGION }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      # 🚀 Disable S3 Block Public Access
-      - name: 🚀 Disable Block Public Access
-        run: |
-          aws s3api put-public-access-block --bucket "$BUCKET_NAME" --public-access-block-configuration '{
-            "BlockPublicAcls": false,
-            "IgnorePublicAcls": false,
-            "BlockPublicPolicy": false,
-            "RestrictPublicBuckets": false
-          }'
-        env:
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      # 🔓 Set bucket policy to allow public read access
-      - name: 🔓 Set public read policy
-        run: |
-          POLICY_JSON=$(cat <<EOF
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Principal": "*",
-                "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::${BUCKET_NAME}/*"
-              }
-            ]
-          }
-          EOF
-          )
-          echo "$POLICY_JSON" > policy.json
-          aws s3api put-bucket-policy --bucket "$BUCKET_NAME" --policy file://policy.json
-        env:
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      # 📤 Upload JAR to S3 with public-read ACL
-      - name: 📤 Upload JAR to Public S3
-        run: |
-          if [ -f "./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar" ]; then
-            aws s3 cp ./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar s3://$BUCKET_NAME/${GITHUB_SHA:0:7}/ --region $AWS_REGION
-            echo "✅ JAR uploaded successfully!"
-            echo "🌍 Public URL: https://$BUCKET_NAME.s3.$AWS_REGION.amazonaws.com/${GITHUB_SHA:0:7}/auto-board-shell-0.0.1-SNAPSHOT.jar"
-          else
-            echo "❌ JAR file not found, skipping upload."
-          fi
-        env:
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+#name: Build and Upload CLI JAR to S3
+#
+#on:
+#  push:
+#    branches:
+#      - 'main'
+#      - 'chris/feature/upload-shell-s3'
+#    paths:
+#      - 'cli/**'
+#      - '.github/workflows/upload-cli.yml'
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      # 📥 Checkout the repository
+#      - name: 📥 Checkout code
+#        uses: actions/checkout@v2
+#
+#      # ☕ Set up Java environment
+#      - name: ☕ Set up JDK 21
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '21'
+#          distribution: 'temurin'
+#          java-package: jdk
+#          architecture: x64
+#
+#      # 🏗️ Build the Maven project in the cli directory
+#      - name: 🏗️ Build cli with Maven
+#        run: mvn clean install -DskipTests
+#        working-directory: ./cli
+#
+#      # 🔧 Install AWS CLI
+#      - name: 🔧 Install AWS CLI
+#        run: |
+#          sudo apt-get install -y python3-pip
+#          python3 -m pip install --upgrade awscli
+#
+#      # 🪣 Ensure S3 bucket exists (create if missing)
+#      - name: 🪣 Ensure S3 bucket exists
+#        run: |
+#          aws s3api head-bucket --bucket ${{ secrets.BUCKET_NAME }} || aws s3 mb s3://${{ secrets.BUCKET_NAME }} --region ${{ secrets.AWS_REGION }}
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#
+#      # 🚀 Disable S3 Block Public Access
+#      - name: 🚀 Disable Block Public Access
+#        run: |
+#          aws s3api put-public-access-block --bucket "$BUCKET_NAME" --public-access-block-configuration '{
+#            "BlockPublicAcls": false,
+#            "IgnorePublicAcls": false,
+#            "BlockPublicPolicy": false,
+#            "RestrictPublicBuckets": false
+#          }'
+#        env:
+#          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#
+#      # 🔓 Set bucket policy to allow public read access
+#      - name: 🔓 Set public read policy
+#        run: |
+#          POLICY_JSON=$(cat <<EOF
+#          {
+#            "Version": "2012-10-17",
+#            "Statement": [
+#              {
+#                "Effect": "Allow",
+#                "Principal": "*",
+#                "Action": "s3:GetObject",
+#                "Resource": "arn:aws:s3:::${BUCKET_NAME}/*"
+#              }
+#            ]
+#          }
+#          EOF
+#          )
+#          echo "$POLICY_JSON" > policy.json
+#          aws s3api put-bucket-policy --bucket "$BUCKET_NAME" --policy file://policy.json
+#        env:
+#          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}
+#
+#      # 📤 Upload JAR to S3 with public-read ACL
+#      - name: 📤 Upload JAR to Public S3
+#        run: |
+#          if [ -f "./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar" ]; then
+#            aws s3 cp ./cli/target/auto-board-shell-0.0.1-SNAPSHOT.jar s3://$BUCKET_NAME/${GITHUB_SHA:0:7}/ --region $AWS_REGION
+#            echo "✅ JAR uploaded successfully!"
+#            echo "🌍 Public URL: https://$BUCKET_NAME.s3.$AWS_REGION.amazonaws.com/${GITHUB_SHA:0:7}/auto-board-shell-0.0.1-SNAPSHOT.jar"
+#          else
+#            echo "❌ JAR file not found, skipping upload."
+#          fi
+#        env:
+#          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.RDS_IAM_USER_ACCESS_KEY }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.RDS_IAM_USER_SECRET_KEY }}
+#          AWS_REGION: ${{ secrets.AWS_REGION }}

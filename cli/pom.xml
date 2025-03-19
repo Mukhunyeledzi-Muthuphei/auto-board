@@ -29,6 +29,8 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-shell.version>3.4.0</spring-shell.version>
+		<sonar.organization>auto-board</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<dependency>
