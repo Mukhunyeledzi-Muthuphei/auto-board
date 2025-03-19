@@ -27,6 +27,7 @@ public class ActivityLogController {
         this.activityLogService = activityLogService;
     }
 
+    @Deprecated
     @GetMapping
     public ResponseEntity<List<ActivityLog>> getAllLogs(@RequestHeader("Authorization") String token)
             throws VerificationException {
@@ -41,6 +42,7 @@ public class ActivityLogController {
         return ResponseEntity.ok(logs); // Success
     }
 
+    @Deprecated
     @GetMapping("/{id}")
     public ResponseEntity<ActivityLog> getLogById(@PathVariable Long id, @RequestHeader("Authorization") String token)
             throws VerificationException {
@@ -54,12 +56,15 @@ public class ActivityLogController {
 
     @GetMapping("/task/{taskId}")
     public ResponseEntity<List<ActivityLog>> getLogsByTaskId(@PathVariable Long taskId,
-            @RequestHeader("Authorization") String token)
-            throws VerificationException {
+            @RequestHeader("Authorization") String token
+    ) throws VerificationException {
+        // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(401).body(List.of()); // Unauthorized
         }
+        // Extract user ID
         String userId = TokenHelper.extractUserIdFromToken(token);
+        // Get activity logs for a task
         List<ActivityLog> logs = activityLogService.getLogsByTaskId(taskId, userId);
         if (logs.isEmpty()) {
             return ResponseEntity.status(404).body(List.of()); // Not Found
@@ -69,12 +74,15 @@ public class ActivityLogController {
 
     @GetMapping("/project/{projectId}")
     public ResponseEntity<List<ActivityLog>> getActivityLogsByProjectId(@PathVariable Long projectId,
-            @RequestHeader("Authorization") String token)
-            throws VerificationException {
+            @RequestHeader("Authorization") String token
+    ) throws VerificationException {
+        // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(401).body(List.of()); // Unauthorized
         }
+        // Extract user ID
         String userId = TokenHelper.extractUserIdFromToken(token);
+        // Get activity logs for all tasks within a project
         List<ActivityLog> logs = activityLogService.getActivityLogsByProjectId(projectId, userId);
         if (logs.isEmpty()) {
             return ResponseEntity.status(404).body(List.of()); // Not Found
@@ -82,11 +90,4 @@ public class ActivityLogController {
         return ResponseEntity.ok(logs); // Success
     }
 
-    // TODO REMOVE LATER
-    // @PostMapping
-    // public ResponseEntity<ActivityLog> createLog(@RequestBody ActivityLog log) {
-    // ActivityLog newLog = activityLogService.createLog(log.getTaskId(),
-    // log.getAction());
-    // return ResponseEntity.ok(newLog);
-    // }
 }
