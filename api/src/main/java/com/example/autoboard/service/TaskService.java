@@ -112,4 +112,9 @@ public class TaskService {
         return taskRepository.findTaskByIdAndUserAccess(taskId, userId);
     }
 
+    // Get tasks by project id
+    public List<Task> getTasksByProjectId(Long projectId, String userId) {
+        return taskRepository.findAllTasksByProjectIdAndUserAccess(projectId, userId);
+    }
+
 }

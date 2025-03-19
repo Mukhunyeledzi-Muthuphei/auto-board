@@ -305,7 +305,7 @@ public class TaskCommand {
         try {
             formatterService.printInfo("Fetching tasks for project...");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/" + project_id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/project/" + project_id, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
             List<Map<String, Object>> tasks = response.getData();
 
@@ -314,7 +314,7 @@ public class TaskCommand {
                 return;
             }
 
-            List<String> selectedHeaders = List.of("id", "name", "description", "status", "assignee_id", "project_id");
+            List<String> selectedHeaders = List.of("id", "title" , "description", "status", "assignee_id", "project_id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
@@ -324,6 +324,12 @@ public class TaskCommand {
                                 if (key.equals("assignee_id")) {
                                     Map<String, Object> assignee = (Map<String, Object>) row.get("assignee");
                                     return assignee != null ? String.valueOf(assignee.getOrDefault("id", "N/A")) : "N/A";
+                                } else if(key.equals("project_id")) {
+                                    Map<String, Object> project = (Map<String, Object>) row.get("project");
+                                    return project != null ? String.valueOf(project.getOrDefault("id", "N/A")) : "N/A";
+                                } else if(key.equals("status")) {
+                                    Map<String, Object> status = (Map<String, Object>) row.get("status");
+                                    return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
                                 } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }

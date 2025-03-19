@@ -92,6 +92,32 @@ public class TaskController {
     }
 
     // Return task if user is project member or owner
+    @GetMapping("/project/{id}")
+    public ResponseEntity<List<Task>> getTaskByProjectId(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token
+    ) {
+        // Validate token
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Extract user ID
+        String userId = TokenHelper.extractUserIdFromToken(token);
+
+        // Task service to run SQL
+        List<Task> tasks = taskService.getTasksByProjectId(id, userId);
+
+        // Check if null
+        if (tasks == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // Return tasks
+        return ResponseEntity.ok(tasks);
+    }
+
+    // Return task if user is project member or owner
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(
             @PathVariable Long id,
