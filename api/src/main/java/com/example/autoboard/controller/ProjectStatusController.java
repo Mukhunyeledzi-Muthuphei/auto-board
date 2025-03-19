@@ -21,8 +21,12 @@ public class ProjectStatusController {
     }
 
     @GetMapping
-    public List<ProjectStatus> getAllProjectStatuses() {
-        return projectStatusService.getAllProjectStatuses();
+    public ResponseEntity<List<ProjectStatus>> getAllProjectStatuses() {
+        List<ProjectStatus> projectStatuses = projectStatusService.getAllProjectStatuses();
+        if (projectStatuses.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
+        }
+        return ResponseEntity.ok(projectStatuses); // Return 200 OK with the list of project statuses
     }
 
     @GetMapping("/{id}")

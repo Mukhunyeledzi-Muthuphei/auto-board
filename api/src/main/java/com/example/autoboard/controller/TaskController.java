@@ -25,7 +25,7 @@ public class TaskController {
 
     @Value("${google.client.id}")
     private String clientId;
-    
+
     private final TaskService taskService;
     private final ActivityLogService activityLogService;
 
@@ -108,14 +108,15 @@ public class TaskController {
     }
 
     @GetMapping("/status/{statusId}")
-    public ResponseEntity<List<Task>> getTasksByStatus(@PathVariable Long statusId, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<Task>> getTasksByStatus(@PathVariable Long statusId,
+            @RequestHeader("Authorization") String token) {
 
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         User assignee = new User();
-        assignee.setId(userId);        
+        assignee.setId(userId);
         List<Task> tasks = taskService.getTasksByStatus(statusId, new User(userId));
         return ResponseEntity.ok(tasks);
     }
@@ -140,7 +141,8 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task,
+            @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -148,8 +150,8 @@ public class TaskController {
         Task updateTask = taskService.updateTask(id, task, new User(userId));
         if (updateTask != null) {
             ActionType action = ActionType.UPDATE_TASK;
-        activityLogService.createLog(updateTask, action.name());
-        return ResponseEntity.ok(updateTask);
+            activityLogService.createLog(updateTask, action.name());
+            return ResponseEntity.ok(updateTask);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -164,7 +166,7 @@ public class TaskController {
         taskService.deleteTask(id, userId);
         ActionType action = ActionType.DELETE_TASK;
         activityLogService.createLog(new Task(id), action.name());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{taskId}/assign")

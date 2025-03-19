@@ -102,12 +102,12 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = TokenHelper.extractUserIdFromToken(token);
         boolean isDeleted = projectService.deleteProject(id, userId);
         if (isDeleted) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
         }
