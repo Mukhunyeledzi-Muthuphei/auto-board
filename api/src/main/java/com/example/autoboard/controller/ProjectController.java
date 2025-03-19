@@ -15,8 +15,6 @@ import com.example.autoboard.entity.ProjectMember;
 import com.example.autoboard.entity.User;
 import com.example.autoboard.service.ProjectMemberService;
 
-import com.example.autoboard.service.ProjectMemberService;
-
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {

@@ -5,13 +5,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.example.autoboard.entity.Task;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> {
+
+    /*
+     * INFO
+     * @Query annotation allows you to define custom JPQL or native SQL queries
+     * nativeQuery specifies query written in SQL, not JPQL
+     */
 
     @Query("SELECT al FROM ActivityLog al " +
             "JOIN al.task t " +
