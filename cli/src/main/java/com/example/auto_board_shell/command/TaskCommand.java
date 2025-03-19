@@ -9,10 +9,7 @@ import com.example.auto_board_shell.service.RequestService;
 import com.example.auto_board_shell.service.FormatterService;
 import com.example.auto_board_shell.service.APIResponse;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.example.auto_board_shell.helpers.CurrentUser;
@@ -29,6 +26,7 @@ public class TaskCommand {
         this.formatterService = formatterService;
     }
 
+    // TODO FIX
     @ShellMethod(key = "task-create", value = "Create a new task for a project.")
     public void createTask(
             @ShellOption(value = "--project-id", help = "Project ID") String project_id) {
@@ -44,12 +42,15 @@ public class TaskCommand {
             Map<String, Object> status = new HashMap<>();
             status.put("id", "1");
 
+            Map<String, Object> project = new HashMap<>();
+            status.put("id", project_id);
+
             Map<String, Object> task = new HashMap<>();
             task.put("title", title);
             task.put("description", description);
             task.put("status", status);
             task.put("assignee", assignee);
-            task.put("project", project_id);
+            task.put("project", project);
 
             APIResponse<Map<String, Object>> response = requestService.post(
                     "/tasks",
@@ -76,6 +77,7 @@ public class TaskCommand {
         }
     }
 
+    // TODO FIX
     @ShellMethod(key = "task-update", value = "Update a task.")
     public void updateTask(
             @ShellOption(value = "--id", help = "Task ID") String taskId) {
@@ -128,6 +130,7 @@ public class TaskCommand {
         }
     }
 
+    // TODO FIX
     @ShellMethod(key = "task-delete", value = "Delete a task.")
     public void deleteTask(
             @ShellOption(value = "--id", help = "Task ID") String taskId) {
@@ -166,8 +169,10 @@ public class TaskCommand {
                                 } else if(key.equals("project_id")) {
                                     Map<String, Object> project = (Map<String, Object>) row.get("project");
                                     return project != null ? String.valueOf(project.getOrDefault("id", "N/A")) : "N/A"; 
-                                }
-                                else {
+                                } else if(key.equals("status")) {
+                                    Map<String, Object> status = (Map<String, Object>) row.get("status");
+                                    return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
+                                } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
                             })
@@ -186,7 +191,7 @@ public class TaskCommand {
         try {
             formatterService.printInfo("Fetching assigned tasks...");
 
-            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
+            APIResponse<List<Map<String, Object>>> response = requestService.get("/tasks/assigned", new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
             List<Map<String, Object>> tasks = response.getData();
 
@@ -195,16 +200,19 @@ public class TaskCommand {
                 return;
             }
 
-            List<String> selectedHeaders = List.of("id", "name", "description", "status", "assignee_id", "project_id");
+            List<String> selectedHeaders = List.of("id", "title", "description", "status", "project_id");
 
             List<String> headers = new ArrayList<>(selectedHeaders);
 
             List<List<String>> data = tasks.stream()
                     .map(row -> selectedHeaders.stream()
                             .map(key -> {
-                                if (key.equals("assignee_id")) {
-                                    Map<String, Object> assignee = (Map<String, Object>) row.get("assignee");
-                                    return assignee != null ? String.valueOf(assignee.getOrDefault("id", "N/A")) : "N/A";
+                                if (key.equals("status")) {
+                                    Map<String, Object> status = (Map<String, Object>) row.get("status");
+                                    return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
+                                } else if (key.equals("project_id")) {
+                                    Map<String, Object> project = (Map<String, Object>) row.get("project");
+                                    return project != null ? String.valueOf(project.getOrDefault("id", "N/A")) : "N/A";
                                 } else {
                                     return String.valueOf(row.getOrDefault(key, "N/A"));
                                 }
@@ -218,6 +226,50 @@ public class TaskCommand {
             formatterService.printError("Error fetching tasks: " + e.getMessage());
         }
     }
+
+    @ShellMethod(key = "task-search-id", value = "Search for a task by ID")
+    public void findTaskById(
+            @ShellOption(value = "--taskId", help = "Task ID") String taskId) {
+        try {
+            formatterService.printInfo("Searching for task...");
+
+            APIResponse<Map<String, Object>> response = requestService.get("/tasks/" + taskId, new ParameterizedTypeReference<Map<String, Object>>() {});
+
+            Map<String, Object> task = response.getData();
+
+            if (task == null || task.isEmpty()) {
+                formatterService.printWarning("No tasks found");
+                return;
+            }
+
+            List<String> selectedHeaders = List.of("id", "title", "description", "status", "assignee_id", "project_id");
+
+            List<String> headers = new ArrayList<>(selectedHeaders);
+
+            List<List<String>> data = List.of(selectedHeaders.stream()
+                    .map(key -> {
+                        if (key.equals("assignee_id")) {
+                            Map<String, Object> assignee = (Map<String, Object>) task.get("assignee");
+                            return assignee != null ? String.valueOf(assignee.getOrDefault("id", "N/A")) : "N/A";
+                        } else if (key.equals("status")) {
+                            Map<String, Object> status = (Map<String, Object>) task.get("status");
+                            return status != null ? String.valueOf(status.getOrDefault("name", "N/A")) : "N/A";
+                        } else if (key.equals("project_id")) {
+                            Map<String, Object> project_id = (Map<String, Object>) task.get("project");
+                            return project_id != null ? String.valueOf(project_id.getOrDefault("id", "N/A")) : "N/A";
+                        } else {
+                            return String.valueOf(task.getOrDefault(key, "N/A"));
+                        }
+                    })
+                    .collect(Collectors.toList()));
+
+            formatterService.printTable(headers, data);
+
+        } catch (Exception e) {
+            formatterService.printError("Error fetching tasks: " + e.getMessage());
+        }
+    }
+
 
     @ShellMethod(key = "task-list-project", value = "List all tasks for a specific project.")
     public void listTasksByProject(
