@@ -22,12 +22,33 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    @Deprecated
+    /**
+     * Creates a new user in the system.
+     * 
+     * @param user The user to be created.
+     * @return The created user.
+     * @deprecated This method is deprecated since version latest and will be
+     *             removed
+     *             in a future release.
+     *             Use a different method for user creation.
+     */
+    @Deprecated(since = "latest", forRemoval = true)
     public User createUser(User user) {
         return userRepository.save(user);
     }
 
-    @Deprecated
+    /**
+     * Updates an existing user in the system.
+     *
+     * @param id          The ID of the user to be updated.
+     * @param userDetails The updated user details.
+     * @return The updated user.
+     * @deprecated This method is deprecated since version latest and will be
+     *             removed
+     *             in a future release.
+     *             Use a different method for user updates.
+     */
+    @Deprecated(since = "latest", forRemoval = true)
     public User updateUser(String id, User userDetails) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {

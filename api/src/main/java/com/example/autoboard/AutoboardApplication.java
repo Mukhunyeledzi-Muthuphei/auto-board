@@ -15,8 +15,6 @@ public class AutoboardApplication {
 
 	@Bean
 	public CommandLineRunner seedDatabase(DataSeeder dataSeeder) {
-		return args -> {
-			dataSeeder.seedDatabase();
-		};
+		return args -> dataSeeder.seedDatabase();
 	}
 }

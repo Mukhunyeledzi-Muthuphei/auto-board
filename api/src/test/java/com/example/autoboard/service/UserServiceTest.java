@@ -98,9 +98,8 @@ public class UserServiceTest {
         userDetails.setFirstName("Jane");
         userDetails.setLastName("Smith");
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(user.getId(), userDetails);
-        });
+        Exception exception = assertThrows(RuntimeException.class,
+                () -> userService.updateUser(user.getId(), userDetails));
 
         String expectedMessage = "User not found with id " + user.getId();
         String actualMessage = exception.getMessage();

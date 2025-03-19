@@ -47,12 +47,8 @@ public class ProjectMemberService {
         return projectMemberRepository.findByProject(project);
     }
 
-
-    public List<ProjectMember> getProjectMemberByUser(User user, String userId) {
-        // if (user.getId().equals(userId)) {
+    public List<ProjectMember> getProjectMemberByUser(User user) {
         return projectMemberRepository.findByUser(user);
-        // }
-        // return List.of();
     }
 
     public ProjectMember createProjectMember(Project project, User user) {
@@ -61,8 +57,6 @@ public class ProjectMemberService {
     }
 
     public ProjectMember saveProjectMember(ProjectMember projectMember, String userId) {
-        System.out.println("project id: " + projectMember.getProject().getId());
-
         // Fetch the project and its owner using ProjectRepository
         Optional<Project> projectOptional = projectRepository.findById(projectMember.getProject().getId());
         if (projectOptional.isEmpty()) {

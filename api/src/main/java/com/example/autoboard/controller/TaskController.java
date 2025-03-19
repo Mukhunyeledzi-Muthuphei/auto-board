@@ -28,7 +28,6 @@ public class TaskController {
     private final TaskService taskService;
     private final ActivityLogService activityLogService;
     private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
 
     @Autowired
     public TaskController(TaskService taskService, ActivityLogService activityLogService,
@@ -36,7 +35,6 @@ public class TaskController {
         this.projectRepository = projectRepository;
         this.activityLogService = activityLogService;
         this.taskService = taskService;
-        this.taskRepository = taskRepository;
     }
 
     // Return all tasks for all projects that a user has access to, either owner or
@@ -209,8 +207,7 @@ public class TaskController {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String userId = TokenHelper.extractUserIdFromToken(token);
-        taskService.deleteTask(id, userId);
+        taskService.deleteTask(id);
         ActionType action = ActionType.DELETE_TASK;
         activityLogService.createLog(new Task(id), action.name());
         return ResponseEntity.ok().build();

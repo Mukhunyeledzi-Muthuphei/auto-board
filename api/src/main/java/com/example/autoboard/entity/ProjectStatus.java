@@ -8,7 +8,8 @@ public class ProjectStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long project_status_id;
+    @Column(name = "project_status_id")
+    private Long projectStatusId;
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
@@ -19,15 +20,19 @@ public class ProjectStatus {
     public ProjectStatus(String name) {
         this.name = name;
     }
+
     public Long getId() {
-        return project_status_id;
+        return projectStatusId;
     }
-    public void setId(Long project_status_id) {
-        this.project_status_id = project_status_id;
+
+    public void setId(Long projectStatusId) {
+        this.projectStatusId = projectStatusId;
     }
+
     public String getName() {
         return name;
     }
+
     public void setStatus(String name) {
         this.name = name;
     }

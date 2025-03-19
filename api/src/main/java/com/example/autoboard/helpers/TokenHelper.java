@@ -9,6 +9,10 @@ import java.util.Base64;
 import java.util.Map;
 
 public class TokenHelper {
+    private TokenHelper() {
+        // Private constructor to prevent instantiation
+    }
+
     public static boolean isValidIdToken(String clientId, String idToken) {
         try {
             TokenVerifier tokenVerifier = TokenVerifier.newBuilder().setAudience(clientId).build();

@@ -11,7 +11,7 @@ public class ProjectMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long project_member_id;
+    private Long projectMemberId;
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false, referencedColumnName = "project_id")
@@ -30,11 +30,11 @@ public class ProjectMember {
     }
 
     public Long getId() {
-        return project_member_id;
+        return projectMemberId;
     }
 
-    public void setId(Long project_member_id) {
-        this.project_member_id = project_member_id;
+    public void setId(Long projectMemberId) {
+        this.projectMemberId = projectMemberId;
     }
 
     public User getUser() {

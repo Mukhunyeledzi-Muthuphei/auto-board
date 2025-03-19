@@ -24,11 +24,14 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired ProjectService projectService;
+    @Autowired
+    ProjectService projectService;
 
-    @Autowired ProjectRepository projectRepository;
+    @Autowired
+    ProjectRepository projectRepository;
 
-    @Autowired TaskStatusRepository taskStatusRepository;
+    @Autowired
+    TaskStatusRepository taskStatusRepository;
 
     @Autowired
     public TaskService(TaskRepository taskRepository) {
@@ -53,41 +56,39 @@ public class TaskService {
     }
 
     public Task updateTask(Long id, Task task, String assignee) {
-       Optional<Task> taskOptional = taskRepository.findById(id);
-    if (taskOptional.isPresent()) {
-        Task tasks = taskOptional.get();
-        if (!tasks.getAssignee().getId().equals(assignee)) {
+        Optional<Task> taskOptional = taskRepository.findById(id);
+        if (taskOptional.isPresent()) {
+            Task tasks = taskOptional.get();
+            if (!tasks.getAssignee().getId().equals(assignee)) {
+                return null;
+            } else {
+                tasks.setTitle(task.getTitle());
+                tasks.setDescription(task.getDescription());
+                tasks.setStatus(task.getStatus());
+                tasks.setProject(task.getProject());
+            }
+
+            Task savedTask = taskRepository.save(tasks);
+
+            return taskRepository.save(savedTask);
+        } else {
             return null;
         }
-        else{
-            tasks.setTitle(task.getTitle());
-            tasks.setDescription(task.getDescription());
-            tasks.setStatus(task.getStatus());
-            tasks.setProject(task.getProject());
-        }
-
-        Task savedTask = taskRepository.save(tasks);
-
-        return taskRepository.save(savedTask);
-    } else {
-        return null;
-    }
     }
 
-    public void deleteTask(Long id, String assignee) {
+    public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
             throw new RuntimeException("Task not found with id: " + id);
+        } else {
+            taskRepository.deleteById(id);
         }
-        else{
-        taskRepository.deleteById(id);
-        }
-        
+
     }
 
     public Task assignTask(Long taskId, String assigneeId) {
         Task task = taskRepository.findById(taskId).orElse(null);
         if (task == null) {
-            return null; 
+            return null;
         }
         User assignee = userRepository.findById(assigneeId).orElse(null);
         if (assignee == null) {

@@ -32,7 +32,7 @@ class ActivityLogServiceTest {
     }
 
     @Test
-    void createLog_shouldSaveActivityLog() {
+    void createLogShouldSaveActivityLog() {
         String action = "Task Created";
         when(task.getId()).thenReturn(1L);
         activityLogService.createLog(task, action);
@@ -40,7 +40,7 @@ class ActivityLogServiceTest {
     }
 
     @Test
-    void getLogsByTaskId_shouldReturnLogs() {
+    void getLogsByTaskIdShouldReturnLogs() {
         Long taskId = 1L;
         String userId = "user123";
         ActivityLog log = new ActivityLog();
@@ -54,7 +54,7 @@ class ActivityLogServiceTest {
     }
 
     @Test
-    void getActivityLogsByProjectId_shouldReturnLogs() {
+    void getActivityLogsByProjectIdShouldReturnLogs() {
         Long projectId = 1L;
         String userId = "user123";
         ActivityLog log = new ActivityLog();

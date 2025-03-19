@@ -9,7 +9,7 @@ public class TaskStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_status_id")
-    private Long task_status_id;
+    private Long taskStatusId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -22,11 +22,11 @@ public class TaskStatus {
     }
 
     public Long getId() {
-        return task_status_id;
+        return taskStatusId;
     }
 
-    public void setId(Long task_status_id) {
-        this.task_status_id = task_status_id;
+    public void setId(Long taskStatusId) {
+        this.taskStatusId = taskStatusId;
     }
 
     public String getName() {

@@ -9,7 +9,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long comment_id;
+    private Long commentId;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -24,14 +24,15 @@ public class Comment {
     private LocalDateTime createdAt;
 
     public Comment() {
+        // Default constructor required by JPA for entity instantiation.
     }
 
     public Long getId() {
-        return comment_id;
+        return commentId;
     }
 
-    public void setId(Long comment_id) {
-        this.comment_id = comment_id;
+    public void setId(Long commentId) {
+        this.commentId = commentId;
     }
 
     public String getContent() {

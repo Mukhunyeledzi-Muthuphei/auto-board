@@ -68,7 +68,7 @@ public class ProjectMemberController {
         }
         User user = new User();
         user.setId(userId);
-        List<ProjectMember> members = projectMemberService.getProjectMemberByUser(user, userId);
+        List<ProjectMember> members = projectMemberService.getProjectMemberByUser(user);
         if (members.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of()); // Not Found
         }

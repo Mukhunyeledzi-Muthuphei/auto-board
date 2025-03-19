@@ -9,7 +9,7 @@ public class ActivityLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long activity_log_id;
+    private Long activityLogId;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
@@ -22,11 +22,11 @@ public class ActivityLog {
     private LocalDateTime timestamp;
 
     public Long getId() {
-        return activity_log_id;
+        return activityLogId;
     }
 
-    public void setId(Long activity_log_id) {
-        this.activity_log_id = activity_log_id;
+    public void setId(Long activityLogId) {
+        this.activityLogId = activityLogId;
     }
 
     public Task getTask() {

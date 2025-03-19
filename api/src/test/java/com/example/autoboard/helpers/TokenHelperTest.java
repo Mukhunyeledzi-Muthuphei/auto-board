@@ -29,7 +29,7 @@ class TokenHelperTest {
     }
 
     @Test
-    void testIsValidIdToken_ValidToken() throws TokenVerifier.VerificationException {
+    void testIsValidIdTokenValidToken() throws TokenVerifier.VerificationException {
         try (MockedStatic<TokenVerifier> mockedTokenVerifier = Mockito.mockStatic(TokenVerifier.class)) {
             // Mock the static method newBuilder() to return the mocked builder
             mockedTokenVerifier.when(TokenVerifier::newBuilder).thenReturn(tokenVerifierBuilder);
@@ -49,7 +49,7 @@ class TokenHelperTest {
     }
 
     @Test
-    void testIsValidIdToken_InvalidToken() throws TokenVerifier.VerificationException {
+    void testIsValidIdTokenInvalidToken() throws TokenVerifier.VerificationException {
         try (MockedStatic<TokenVerifier> mockedTokenVerifier = Mockito.mockStatic(TokenVerifier.class)) {
             // Mock the static method newBuilder() to return the mocked builder
             mockedTokenVerifier.when(TokenVerifier::newBuilder).thenReturn(tokenVerifierBuilder);
