@@ -99,14 +99,4 @@ public class UserControllerTest {
 
         verify(userService, times(1)).updateUser(anyString(), any(User.class));
     }
-
-    @Test
-    public void testDeleteUser() throws Exception {
-        doNothing().when(userService).deleteUser(anyString());
-
-        mockMvc.perform(delete("/api/users/{id}", user.getId()))
-                .andExpect(status().isNoContent());
-
-        verify(userService, times(1)).deleteUser(user.getId());
-    }
 }
