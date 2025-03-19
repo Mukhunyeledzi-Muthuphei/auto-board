@@ -74,14 +74,13 @@ public class TaskService {
     }
     }
 
-    public void deleteTask(Long id, String assignee) {
-        if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found with id: " + id);
+    public boolean deleteTask(Long taskId, String userId) {
+        Optional<Task> task = taskRepository.findTaskByIdAndUserAccess(taskId, userId);
+        if (task.isPresent()) {
+            taskRepository.deleteById(task.get().getId());
+            return true;
         }
-        else{
-        taskRepository.deleteById(id);
-        }
-        
+        return false;
     }
 
     public Task assignTask(Long taskId, String assigneeId) {
