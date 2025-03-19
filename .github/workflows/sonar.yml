@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  sonarQubeApplication:
     name: Build Project
     runs-on: ubuntu-latest
     steps:
