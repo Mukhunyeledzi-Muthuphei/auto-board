@@ -31,7 +31,7 @@
 		<sonar.organization>auto-board</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.sources>.</sonar.sources>
-		<sonar.inclusions>src/main/**</sonar.inclusions>
+		<sonar.inclusions>src/main/java/**</sonar.inclusions>
 	</properties>
 	<dependencies>
 
