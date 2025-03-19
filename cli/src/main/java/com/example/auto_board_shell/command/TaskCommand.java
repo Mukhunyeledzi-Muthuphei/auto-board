@@ -56,6 +56,11 @@ public class TaskCommand {
                     new ParameterizedTypeReference<Map<String, Object>>() {}
             );
 
+            if (response.getStatusCode() == 404) {
+                formatterService.printError("No projects available with ID: " + project_id);
+                return;
+            }
+
             if (response.getData() == null) {
                 formatterService.printError("Failed to create task: " + response.getMessage());
                 return;

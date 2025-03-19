@@ -141,9 +141,14 @@ public class TaskController {
         if (!task.getAssignee().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Optional<Project> project = projectRepository.findById(task.getProject().getId());
+        Optional<Project> project = projectRepository.findProjectByIdAndUser(task.getProject().getId(), userId);
 
-        task.setProject(project.get());
+        if (project.isPresent()) {
+            task.setProject(project.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
         // Ensure the task is associated with a valid project
         if (task.getProject() == null || task.getProject().getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
