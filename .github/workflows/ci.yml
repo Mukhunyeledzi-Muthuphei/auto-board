@@ -325,7 +325,7 @@ jobs:
         run: |
           docker run --rm \
           -v $(pwd)/flyway:/flyway/sql \
-          flyway/flyway migrate \
+          flyway/flyway -baselineOnMigrate=true migrate \
           -url="jdbc:postgresql://${{ env.RDS_ENDPOINT }}:5432/${{ secrets.DB_NAME }}" \
           -user=${{ secrets.DB_USERNAME }} \
           -password=${{ secrets.DB_PASSWORD }}
