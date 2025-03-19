@@ -14,9 +14,6 @@ import com.example.autoboard.repository.*;
 import com.example.autoboard.helpers.ActionType;
 import com.example.autoboard.entity.*;
 
-
-
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,18 +31,19 @@ public class TaskController {
     private final TaskRepository taskRepository;
 
     @Autowired
-    public TaskController(TaskService taskService, ActivityLogService activityLogService, ProjectRepository projectRepository, TaskRepository taskRepository) {
+    public TaskController(TaskService taskService, ActivityLogService activityLogService,
+            ProjectRepository projectRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
         this.activityLogService = activityLogService;
         this.taskService = taskService;
         this.taskRepository = taskRepository;
     }
 
-    // Return all tasks for all projects that a user has access to, either owner or project member
+    // Return all tasks for all projects that a user has access to, either owner or
+    // project member
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks(
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -69,8 +67,7 @@ public class TaskController {
     // Return tasks assigned to a user
     @GetMapping("/assigned")
     public ResponseEntity<List<Task>> getTasksByUserId(
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -95,8 +92,7 @@ public class TaskController {
     @GetMapping("/project/{id}")
     public ResponseEntity<List<Task>> getTaskByProjectId(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -121,8 +117,7 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token
-    ) {
+            @RequestHeader("Authorization") String token) {
         // Validate token
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -156,10 +151,9 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<Task> createTask(
             @RequestBody Task task,
-            @RequestHeader("Authorization") String token
-    ) {
-         // Validate the token
-         if (!TokenHelper.isValidIdToken(clientId, token)) {
+            @RequestHeader("Authorization") String token) {
+        // Validate the token
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -192,20 +186,22 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task,
-            @RequestHeader("Authorization") String token)
-             {
-                if (!TokenHelper.isValidIdToken(clientId, token)) {
-                    return ResponseEntity.notFound().build();
-                }
-                String userId = TokenHelper.extractUserIdFromToken(token);
-                Task updatedTask = taskService.updateTask(id, task, userId);
-                if (updatedTask != null) {
-                    ActionType action = ActionType.UPDATE_TASK;
-                    activityLogService.createLog(updatedTask, action.name());
-                    return ResponseEntity.ok(updatedTask);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
+            @RequestHeader("Authorization") String token) {
+        if (!TokenHelper.isValidIdToken(clientId, token)) {
+            return ResponseEntity.notFound().build();
+        }
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        Task updatedTask = taskService.updateTask(id, task, userId);
+        if (updatedTask != null) {
+            ActionType action = ActionType.UPDATE_TASK;
+            if (updatedTask.getStatus().getId() == 4) {
+                action = ActionType.COMPLETE_TASK;
+            }
+            activityLogService.createLog(updatedTask, action.name());
+            return ResponseEntity.ok(updatedTask);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -240,7 +236,5 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-
 
 }
