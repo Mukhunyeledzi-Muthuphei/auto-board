@@ -95,7 +95,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testGetTaskById_NotFound() {
+    void testGetTaskByIdNotFound() {
         when(taskRepository.findByIdAndAssignee(1L, user)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> taskService.getTaskById(1L, user));
@@ -142,7 +142,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testUpdateTask_NotFound() {
+    void testUpdateTaskNotFound() {
         when(taskRepository.findById(1L)).thenReturn(Optional.empty());
 
         Task result = taskService.updateTask(1L, task, "user1");
@@ -152,7 +152,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testDeleteTask_Success() {
+    void testDeleteTaskSuccess() {
         // Arrange
         Long taskId = 1L;
         String userId = "user-123";
@@ -172,12 +172,13 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testDeleteTask_Failure_TaskNotFound() {
+    void testDeleteTaskFailureTaskNotFound() {
         // Arrange
         Long taskId = 1L;
         String userId = "user-123";
 
-        // Mock the repository to return an empty optional (task not found or user does not have access)
+        // Mock the repository to return an empty optional (task not found or user does
+        // not have access)
         when(taskRepository.findTaskByIdAndUserAccess(taskId, userId)).thenReturn(Optional.empty());
 
         // Act
@@ -190,7 +191,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testDeleteTask_Failure_UserDoesNotHaveAccess() {
+    void testDeleteTaskFailureUserDoesNotHaveAccess() {
         // Arrange
         Long taskId = 1L;
         String userId = "user-123";

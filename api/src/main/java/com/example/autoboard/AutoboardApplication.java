@@ -12,9 +12,4 @@ public class AutoboardApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AutoboardApplication.class, args);
 	}
-
-	@Bean
-	public CommandLineRunner seedDatabase(DataSeeder dataSeeder) {
-		return args -> dataSeeder.seedDatabase();
-	}
 }

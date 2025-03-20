@@ -63,7 +63,7 @@ public class ProjectStatusServiceTest {
     }
 
     @Test
-    void testGetProjectStatusById_notFound() {
+    void testGetProjectStatusByIdNotFound() {
         // Arrange: Mock the repository method to return an empty Optional
         when(projectStatusRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -91,7 +91,7 @@ public class ProjectStatusServiceTest {
     }
 
     @Test
-    void testGetProjectStatusByName_notFound() {
+    void testGetProjectStatusByNameNotFound() {
         // Arrange: Mock the repository method to return null
         when(projectStatusRepository.findByName("Nonexistent")).thenReturn(null);
 

@@ -109,8 +109,8 @@ public class ProjectMemberCommand {
                                     return "N/A";
                             }
                         })
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+                        .toList())
+                .toList();
 
         formatterService.printTable(headers, data);
 

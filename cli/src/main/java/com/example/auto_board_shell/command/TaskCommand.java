@@ -28,7 +28,7 @@ public class TaskCommand {
 
     @ShellMethod(key = "task-create", value = "Create a new task for a project.")
     public void createTask(
-            @ShellOption(value = "--projectId", help = "Project ID") String project_id) {
+            @ShellOption(value = "--projectId", help = "Project ID") String projectId) {
         try {
             formatterService.printInfo("Creating new task...");
 
@@ -42,7 +42,7 @@ public class TaskCommand {
             status.put("id", "1");
 
             Map<String, Object> project = new HashMap<>();
-            project.put("id", project_id);
+            project.put("id", projectId);
 
             Map<String, Object> task = new HashMap<>();
             task.put("title", title);
@@ -58,7 +58,7 @@ public class TaskCommand {
                     });
 
             if (response.getStatusCode() == 404) {
-                formatterService.printError("No projects available with ID: " + project_id);
+                formatterService.printError("No projects available with ID: " + projectId);
                 return;
             }
 

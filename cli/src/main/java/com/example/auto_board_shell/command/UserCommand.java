@@ -75,7 +75,7 @@ public class UserCommand {
 
             List<List<String>> data = List.of(headers.stream()
                     .map(key -> String.valueOf(user.getOrDefault(key, "N/A")))
-                    .collect(Collectors.toList()));
+                    .toList());
 
             formatterService.printTable(headers, data);
 

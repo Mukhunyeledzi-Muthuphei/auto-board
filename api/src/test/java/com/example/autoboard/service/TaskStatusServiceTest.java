@@ -63,7 +63,7 @@ public class TaskStatusServiceTest {
     }
 
     @Test
-    void testGetTaskStatusById_notFound() {
+    void testGetTaskStatusByIdNotFound() {
         // Arrange
         when(taskStatusRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -91,7 +91,7 @@ public class TaskStatusServiceTest {
     }
 
     @Test
-    void testGetTaskStatusByName_notFound() {
+    void testGetTaskStatusByNameNotFound() {
         // Arrange
         when(taskStatusRepository.findByName("Nonexistent")).thenReturn(null);
 

@@ -44,7 +44,7 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testGetProjectMemberById_Success() {
+    void testGetProjectMemberByIdSuccess() {
         when(projectMemberRepository.findById(1L)).thenReturn(Optional.of(projectMember));
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
 
@@ -53,7 +53,7 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testGetProjectMemberById_NotOwner() {
+    void testGetProjectMemberByIdNotOwner() {
         when(projectMemberRepository.findById(1L)).thenReturn(Optional.of(projectMember));
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
 
@@ -62,7 +62,7 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testGetProjectMembersByProject_Success() {
+    void testGetProjectMembersByProjectSuccess() {
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
         when(projectMemberRepository.findByProject(project)).thenReturn(List.of(projectMember));
 
@@ -78,7 +78,7 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testSaveProjectMember_Success() {
+    void testSaveProjectMemberSuccess() {
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
         when(projectMemberRepository.save(any(ProjectMember.class))).thenReturn(projectMember);
 
@@ -87,14 +87,14 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testSaveProjectMember_NotOwner() {
+    void testSaveProjectMemberNotOwner() {
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
         ProjectMember result = projectMemberService.saveProjectMember(projectMember, "3");
         assertNull(result);
     }
 
     @Test
-    void testDeleteProjectMember_Success() {
+    void testDeleteProjectMemberSuccess() {
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
         when(projectMemberRepository.findByProjectAndUser(project, member)).thenReturn(Optional.of(projectMember));
 
@@ -103,7 +103,7 @@ class ProjectMemberServiceTest {
     }
 
     @Test
-    void testDeleteProjectMember_NotOwner() {
+    void testDeleteProjectMemberNotOwner() {
         when(projectRepository.findById(100L)).thenReturn(Optional.of(project));
 
         projectMemberService.deleteProjectMember(projectMember, "3");
