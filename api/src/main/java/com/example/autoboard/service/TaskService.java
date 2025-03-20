@@ -34,8 +34,9 @@ public class TaskService {
     TaskStatusRepository taskStatusRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Task> getAlltasks() {
@@ -68,21 +69,19 @@ public class TaskService {
                 tasks.setProject(task.getProject());
             }
 
-            Task savedTask = taskRepository.save(tasks);
-
-            return taskRepository.save(savedTask);
+            return taskRepository.save(tasks);
         } else {
             return null;
         }
     }
 
-    public void deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found with id: " + id);
-        } else {
-            taskRepository.deleteById(id);
+    public boolean deleteTask(Long taskId, String userId) {
+        Optional<Task> task = taskRepository.findTaskByIdAndUserAccess(taskId, userId);
+        if (task.isPresent()) {
+            taskRepository.deleteById(task.get().getId());
+            return true;
         }
-
+        return false;
     }
 
     public Task assignTask(Long taskId, String assigneeId) {

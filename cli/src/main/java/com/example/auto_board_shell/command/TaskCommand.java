@@ -175,7 +175,7 @@ public class TaskCommand {
             @ShellOption(value = "--id", help = "Task ID") String taskId) {
         try {
             requestService.delete("/tasks/" + taskId);
-            formatterService.printSuccess("Task deleted successfully!");
+            formatterService.printSuccess("Attempting to delete task!");
         } catch (Exception e) {
             formatterService.printError("Error deleting task: " + e.getMessage());
         }

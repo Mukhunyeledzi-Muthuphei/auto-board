@@ -207,10 +207,13 @@ public class TaskController {
         if (!TokenHelper.isValidIdToken(clientId, token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        taskService.deleteTask(id);
-        ActionType action = ActionType.DELETE_TASK;
-        activityLogService.createLog(new Task(id), action.name());
-        return ResponseEntity.ok().build();
+        String userId = TokenHelper.extractUserIdFromToken(token);
+        boolean isDeleted = taskService.deleteTask(id, userId);
+        if (isDeleted) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PutMapping("/{taskId}/assign")
